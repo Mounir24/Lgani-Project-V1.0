@@ -1,0 +1,114 @@
+/*--- SCSS FUNCTIONs ---*/
+// DISPLAYED
+@mixin Displayed($pos, $dir) {
+    display: flex;
+    justify-content: $pos;
+    align-items: center;
+    flex-direction: $dir;
+}
+
+// BUTTONS
+@mixin Button($padd, $bg) {
+    padding: $padd;
+    outline: none;
+    border: none;
+    background: $bg;
+    border-radius: 24px;
+}
+
+// FONTS
+@mixin Font($fnt, $wgt, $sz, $clr) {
+    font-family: $fnt;
+    font-weight: $wgt;
+    font-size: $sz;
+    color: $clr;
+    text-transform: uppercase;
+}
+
+.footer_section {
+    width: 100%;
+    height: 100%;
+    //margin-top: 4.5rem;
+    border-top: 1px solid hsl(184, 5%, 40%);
+
+    .footer_wrapper {
+        @include Displayed(center, column);
+        margin: auto;
+        padding: 1.75rem 0;
+
+        .footer_body {
+            margin-bottom: 2.5rem;
+            @include Displayed(center, column);
+
+            .ftr_logo_bx {
+                width: 8.3rem;
+                height: auto;
+                @include Displayed(center, row);
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            .ftr_slogan {
+                @include Font($robotoCD, 200, 21px, hsl(184, 9%, 92%));
+                text-transform: capitalize !important;
+                margin-top: 1.9rem;
+            }
+        }
+
+        .footer_tail {
+            margin-top: 2.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            @include Displayed(space-between, row);
+
+            .ftr_label {
+                @include Font($shadows, 300, 25px, hsl(184, 9%, 92%));
+                text-transform: capitalize !important;
+            }
+
+            .ftr_social_media {
+                @include Displayed(center, row);
+
+
+                .ftr_item {
+                    margin-right: 1.5rem;
+
+                    a {
+                        font-size: 17px !important;
+
+                        .bxl-instagram,
+                        .bxl-facebook,
+                        .bxl-twitter {
+                            font-size: 23px;
+                            color: $bg_clr;
+                        }
+                    }
+                }
+            }
+
+            .ftr_cpoyright_wrapper {
+
+                .copyright_content_desc {
+                    @include Font($robotoCD, 200, 16px, hsl(184, 9%, 92%));
+                    text-transform: capitalize !important;
+
+                    .brand_name {
+                        color: $primary_clr !important;
+                    }
+                }
+            }
+
+            .ftr_support_action {
+                @include Displayed(flex-start, column);
+
+                a {
+                    @include Font($robotoCD, 200, 16px, hsl(184, 9%, 92%));
+                }
+            }
+        }
+    }
+}

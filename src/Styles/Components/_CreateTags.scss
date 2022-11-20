@@ -1,0 +1,213 @@
+/*--- SCSS FUNCTIONs ---*/
+// DISPLAYED
+@mixin Displayed($pos, $dir) {
+    display: flex;
+    justify-content: $pos;
+    align-items: center;
+    flex-direction: $dir;
+}
+
+// BUTTONS
+@mixin Button($padd, $bg) {
+    padding: $padd;
+    outline: none;
+    border: none;
+    background: $bg;
+    border-radius: 24px;
+}
+
+// FONTS
+@mixin Font($fnt, $wgt, $sz, $clr) {
+    font-family: $fnt;
+    font-weight: $wgt;
+    font-size: $sz !important;
+    color: $clr;
+    text-transform: uppercase;
+}
+
+.dash_tags_creation_container {
+    width: 100%;
+    min-height: 100vh;
+
+    .dash_section_label {
+        @include Font($montserrat, 500, 30px, $titles_clr);
+        //margin-bottom: 1.5rem;
+        text-align: center;
+        margin: 0 auto;
+        margin-bottom: 4.5rem;
+
+        &:after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 6px;
+            border-radius: 6px;
+            background: $primary_clr;
+            margin: 5px auto;
+        }
+    }
+
+    .dash_left_panel_form {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+
+        .owner_info_form {
+            width: 100%;
+            padding: 0 .75rem;
+
+            .dash_form_label {
+                @include Font($robotoCD, 200, 16px, $titles_clr);
+                text-transform: capitalize !important;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select {
+                padding: 15px !important;
+                outline: none;
+                border: 1px solid #D1D1D1;
+                border-radius: 10px;
+                background: transparent !important;
+                margin: 0.25rem 0;
+                //padding-left: 1.5rem;
+                @include Font($rajdhani, 500, 16px, #111);
+
+                //border: 2px solid $secondary_clr;
+                &:focus {
+                    border-color: none !important;
+                    border: none;
+                    outline: none;
+                }
+            }
+
+            .hint-alert-wrap {
+                margin-top: 1rem;
+            }
+
+            .form-shop-btn-redirect {
+                @include Button(10px 35px, $primary_clr);
+                @include Font($robotoCD, 200, 15px, $bg_clr);
+                @include Displayed(flex-start, row);
+                margin-top: 1.75rem;
+                box-shadow: $bx-sh;
+
+                .bx-shopping-bag {
+                    font-size: 26px;
+                    color: #FFF;
+                    margin-right: 0.50rem;
+                }
+            }
+
+        }
+    }
+
+    .dash_right_panel_form {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+
+        .loster_profile_avtr_wrapper {
+            width: 7.5rem;
+            height: 7.5rem;
+            margin: auto;
+            margin-bottom: 1.75rem;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 100%;
+            }
+        }
+
+        .loster_info_form {
+            width: 100%;
+            padding: 0 .75rem;
+
+            .dash_form_label {
+                @include Font($robotoCD, 200, 16px, $titles_clr);
+                text-transform: capitalize !important;
+            }
+
+            .file-input {
+                width: 100%;
+                margin: auto;
+                @include Displayed(center, column);
+
+                .file {
+                    opacity: 0;
+                    width: 0.1px;
+                    height: 0.1px;
+                    position: absolute;
+                }
+
+                label {
+                    display: block;
+                    position: relative;
+                    //width: 15rem;
+                    padding: 10px 25px;
+                    border-radius: 25px;
+                    background: $secondary_clr;
+                    //box-shadow: $bx-sh;
+                    @include Displayed(center, row);
+                    @include Font($robotoCD, 200, 15px, $bg_clr);
+                    cursor: pointer;
+                    transition: transform .2s ease-out;
+
+                    .bx-cloud-upload {
+                        font-size: 26px;
+                        color: $bg_clr;
+                        margin-right: 0.75rem;
+                    }
+                }
+
+                .file-name-info {
+                    margin-top: 0.75rem;
+                    @include Font($robotoCD, 200, 15px, $titles_clr);
+                }
+            }
+
+
+            input[type="text"],
+            input[type="number"],
+            select {
+                padding: 15px !important;
+                outline: none;
+                border: 1px solid #D1D1D1;
+                border-radius: 10px;
+                background: transparent !important;
+                margin: 0.25rem 0;
+                //padding-left: 1.5rem;
+                @include Font($rajdhani, 500, 16px, #111);
+
+                //border: 2px solid $secondary_clr;
+                &:focus {
+                    border-color: none !important;
+                    border: none;
+                    outline: none;
+                }
+            }
+
+            .form_create_btn_wrapper {
+                margin: 1.4rem auto;
+                width: 100%;
+                @include Displayed(center, row);
+
+                .create-btn {
+                    @include Button(10px 35px, $primary_clr);
+                    @include Font($robotoCD, 200, 15px, $bg_clr);
+                    margin-top: 1.75rem;
+                    box-shadow: $bx-sh;
+                }
+            }
+        }
+
+        .privacy_hint_alert {
+            margin-top: 0.75rem;
+        }
+    }
+
+}
