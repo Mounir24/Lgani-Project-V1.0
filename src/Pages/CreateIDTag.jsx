@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import axios from "axios";
 
 // IMPORT ASSETS
 import HumainAvatar from "../Assets/SVG/user-avatar.png";
@@ -13,6 +14,7 @@ function CreateIDTag() {
   // STATE MANAGEMENT
   const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const [allCountries, setAllCountries] = useState([]);
 
   // HANDLE SIGNUP PASSWORD SWITCH INPUT
   const handleSignupSwitch = (event) => {
@@ -22,6 +24,34 @@ function CreateIDTag() {
       setIsGPSEnabled(false);
     }
   };
+
+  useEffect(() => {
+    // HTTP CALL - COUNTRIES REST API ENDPOINT
+    const getCountries = async () => {
+      const API_ENDPOINT = "https://restcountries.com/v3.1/all";
+      try {
+        await axios.get(API_ENDPOINT).then((response) => {
+          if (response.status === 200 && response.statusText === "OK") {
+            response.data.map((country) => {
+              const name = country["name"].common;
+              if (allCountries.includes(name)) {
+                const itemIndex = allCountries.indexOf(name);
+                // REMOVE MULTIPLE VALUES
+                allCountries.splice(itemIndex, 1);
+              } else {
+                setAllCountries((prev) => [...prev, name]);
+              }
+            });
+          } else {
+            alert("SOMETHING WRONG ON FETCHING COUNTRIES API :(");
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getCountries();
+  }, []);
 
   // CONVERT FILE IMAGE TO BASE64
   const toBase64 = (FILE) => {
@@ -94,19 +124,24 @@ function CreateIDTag() {
                   <div className="form-group col-md-6 col-6 col-sm-6">
                     <select name="country" className="form-select mr-sm-2">
                       <option selected>Select Country</option>
-                      <option value="Morocco">Morocco</option>
-                      <option value="United Stated Of America">
-                        United Stated Of America
-                      </option>
+                      {allCountries.sort().map((country, index) => {
+                        return (
+                          <>
+                            <option key={index} value={country}>
+                              {country}
+                            </option>
+                          </>
+                        );
+                      })}
                     </select>
                   </div>
                   <div className="form-group col-md-6 col-6 col-sm-6">
-                    <select name="city" className="form-select mr-sm-2">
-                      <option selected>Select City</option>
-                      <option value="Agadir">Agadir</option>
-                      <option value="Rabat">Rabat</option>
-                      <option value="Casa Blanca">Casa Blanca</option>
-                    </select>
+                    <input
+                      type="text"
+                      className="form-control owner_form_input"
+                      name="city"
+                      placeholder="Enter your city"
+                    ></input>
                   </div>
                 </div>
                 <div className="form-row">

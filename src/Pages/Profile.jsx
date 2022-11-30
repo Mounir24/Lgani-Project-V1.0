@@ -1,6 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Profile() {
+  // STATE MANAGEMENT
+  const [avatar, setAvatar] = useState("");
+
+  // CONVERT FILE IMAGE TO BASE64
+  const toBase64 = (FILE) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(FILE);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // HANDLE PROFILE AVATAR EVENT
+  const handleAvatarChange = (event) => {
+    const FILE = event.target.files[0];
+    // CHECK THE FILE MIME TYPE
+    const allowed_mime_types = [
+      "image/png",
+      "image/svg",
+      "image/jpeg",
+      "image/webp",
+    ];
+    if (!allowed_mime_types.includes(FILE.type)) {
+      return alert("FILE NOT SUPPORTED: [png - svg - jpeg]");
+    }
+
+    // Get the file name and size
+    const { name: fileName, size } = FILE;
+    // Convert size in bytes to kilo bytes
+    const fileSize = (size / 1000).toFixed(2);
+    // Set the text content
+    const fileNameAndSize = `${fileName} - ${fileSize}KB`;
+    document.querySelector(".file-name-info").textContent = fileNameAndSize;
+
+    toBase64(FILE).then((AVATAR) => {
+      setAvatar(AVATAR);
+    });
+  };
+
   return (
     <div className="container mt-3">
       <div className="dash_profile_container">
@@ -117,7 +157,11 @@ function Profile() {
               <div className="profile_info_display_wrapper">
                 <div className="client_profile_avtr_wrapper">
                   <img
-                    src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04"
+                    src={
+                      avatar
+                        ? avatar
+                        : "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04"
+                    }
                     alt="Client Profile"
                   />
                 </div>
@@ -126,6 +170,21 @@ function Profile() {
                   <span className="profile_client_country">
                     Morocco, Agadir (MA)
                   </span>
+                </div>
+                {/*--- FILE PROFILE UPLAOD INPUT  ---*/}
+                <div class="file-input">
+                  <input
+                    type="file"
+                    className="file loster_form_input"
+                    id="file"
+                    onChange={handleAvatarChange}
+                    name="profile_avatar"
+                    placeholder="Upload Loster Profile Avatar"
+                  ></input>
+                  <label for="file">
+                    <i class="bx bx-cloud-upload"></i> Profile Avatar
+                  </label>
+                  <p class="file-name-info"></p>
                 </div>
               </div>
             </div>

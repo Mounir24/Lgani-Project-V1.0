@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { UserAuthContext } from "../Context/UserAuthContext";
 
 // IMPORT ASSETS (LOGO - ...)
-import Logo from "../Assets/lgani-logo.png";
+import Logo from "../Assets/ajidq-logo.png";
 
 function Header() {
   const { dispatch } = useContext(UserAuthContext);

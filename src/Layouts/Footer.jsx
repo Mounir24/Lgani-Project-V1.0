@@ -1,6 +1,6 @@
 import React from "react";
 // IMPORT ASSETS (LOGO - ...)
-import Logo from "../Assets/lgani-logo.png";
+import Logo from "../Assets/ajidq-logo.png";
 
 function Footer() {
   return (

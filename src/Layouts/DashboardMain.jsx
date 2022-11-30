@@ -360,7 +360,7 @@ function DashboardMain() {
           <h4 className="dash_section_label"># Last Qr Code ID Tags</h4>
           <div className="container">
             <div className="row w-100 mt-4">
-              <div className="col-md-4 col-sm-12 col-4">
+              <div className="col-md-4 col-sm-12 col-4 mb-3">
                 <div className="qrcode-tag-box-container">
                   <div className="qrcode-icon-wrapper-top">
                     <i class="bx bx-qr-scan"></i>
@@ -390,7 +390,7 @@ function DashboardMain() {
                   </div>
                 </div>
               </div>
-              <div className="col-md-4 col-sm-12 col-4">
+              <div className="col-md-4 col-sm-12 col-4 mb-3">
                 <div className="qrcode-tag-box-container">
                   <div className="qrcode-icon-wrapper-top">
                     <i class="bx bx-qr-scan"></i>
@@ -420,7 +420,7 @@ function DashboardMain() {
                   </div>
                 </div>
               </div>
-              <div className="col-md-4 col-sm-12 col-4">
+              <div className="col-md-4 col-sm-12 col-4 mb-3">
                 <div className="qrcode-create-new-box">
                   <div className="qrcode-icon-wrapper-top">
                     <i class="bx bx-qr-scan"></i>

@@ -229,15 +229,15 @@ function IDTagsManager() {
                   <div className="form-group col-md-3 col-3 col-sm-4">
                     <select name="fl_status" className="form-select mr-sm-2">
                       <option selected>Filter By Status</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
+                      <option value="true">Active</option>
+                      <option value="false">Inactive</option>
                     </select>
                   </div>
                   <div className="form-group col-md-3 col-3 col-sm-4">
                     <select name="fl_date" className="form-select mr-sm-2">
-                      <option selected>Filter By date </option>
-                      <option value="desc">Arrange by descending</option>
-                      <option value="asc">Arrange by ascending</option>
+                      <option selected>Filter By Object Type </option>
+                      <option value="Humains">Humains</option>
+                      <option value="Pets">Pets</option>
                     </select>
                   </div>
                   <div className="form-group col-md-3 col-sm-3 col-4">
@@ -245,15 +245,8 @@ function IDTagsManager() {
                       type="text"
                       className="form-control filter_form_input"
                       name="fl_name"
-                      placeholder="Filter by Name"
+                      placeholder="Filter by Full Name"
                     ></input>
-                  </div>
-                  <div className="form-group col-md-3 col-3 col-sm-4">
-                    <select name="fl_visits" className="form-select mr-sm-2">
-                      <option selected>Filter By visits</option>
-                      <option value="High">Most Visited</option>
-                      <option value="Low">Low Visited</option>
-                    </select>
                   </div>
                 </div>
               </form>
