@@ -122,8 +122,8 @@
                     @include Displayed(flex-start, row);
 
                     .statis_icon_wrapper {
-                        width: 3.5rem;
-                        height: 3.5rem;
+                        width: 3rem;
+                        height: 3rem;
                         background: $bg_clr;
                         @include Displayed(center, row);
                         //margin: auto;
@@ -143,8 +143,9 @@
                         margin-left: 2.75rem;
 
                         .statis_data {
-                            @include Font($montserrat, 500, 27px, $bg_clr);
+                            @include Font($montserrat, 500, 25px, $bg_clr);
                             margin-bottom: 0.25rem;
+                            text-transform: capitalize !important;
                         }
 
                         .statis_label {
@@ -399,6 +400,8 @@
                         img {
                             width: 100%;
                             height: 100%;
+                            border-radius: 100%;
+                            object-fit: cover;
                         }
                     }
 

@@ -47,6 +47,12 @@
         }
     }
 
+    .profile-view-btn {
+        @include Button(4px 20px, $secondary_clr);
+        @include Font($robotoCD, 200, 14px, $bg_clr);
+        text-transform: capitalize !important;
+    }
+
     .dash_filter_section {
         width: 100%;
         padding: 0.75rem;

@@ -5,6 +5,7 @@ import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import axios from "axios";
+import Select from "react-select";
 
 // IMPORT ASSETS
 import HumainAvatar from "../Assets/SVG/user-avatar.png";
@@ -41,6 +42,8 @@ function CreateIDTag() {
               } else {
                 setAllCountries((prev) => [...prev, name]);
               }
+
+              return true;
             });
           } else {
             alert("SOMETHING WRONG ON FETCHING COUNTRIES API :(");
@@ -51,7 +54,7 @@ function CreateIDTag() {
       }
     };
     getCountries();
-  }, []);
+  }, [allCountries]);
 
   // CONVERT FILE IMAGE TO BASE64
   const toBase64 = (FILE) => {
@@ -89,6 +92,11 @@ function CreateIDTag() {
       setAvatar(AVATAR);
     });
   };
+
+  const options = [
+    { value: "Braclets", label: "Braclets (humains)" },
+    { value: "Necklace", label: "Necklace (Pets)" },
+  ];
 
   return (
     <div className="container mt-3">
@@ -206,23 +214,27 @@ function CreateIDTag() {
                 <span className="dash_form_label">#ID Tags Products</span>
                 <div className="form-row">
                   <div className="form-group col-md-12 col-12 col-sm-12">
-                    <select name="tag_product" className="form-select mr-sm-2">
+                    {/*---<select name="tag_product" className="form-select mr-sm-2">
                       <option selected>Select ID Tag Product</option>
                       <option value="Pets">Pets</option>
                       <option value="Humains">Humains</option>
-                    </select>
+                    </select>---*/}
+                    <Select
+                      name="tag_product"
+                      className="mr-sm-2"
+                      options={options}
+                      style={{ borderRadius: "10px !important" }}
+                    />
                     <div className="hint-alert-wrap">
                       <Alert severity="info">
                         <AlertTitle>Note</AlertTitle>
-                        When you select the Product type , you will redirect to
-                        our shop store to order your product, and then make sure
-                        to order it with same info: (e-mail - address - Phone
-                        Number) to complete your order as soon as possible
+                        for each product has the same price , the standard price
+                        = $24.99 (249 Dhs)
                       </Alert>
                     </div>
-                    <button className="form-shop-btn-redirect">
+                    {/*---<button className="form-shop-btn-redirect">
                       <i class="bx bx-shopping-bag"></i> Shop Now
-                    </button>
+                        </button>---*/}
                   </div>
                 </div>
               </form>

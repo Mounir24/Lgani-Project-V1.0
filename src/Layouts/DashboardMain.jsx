@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
@@ -13,12 +13,14 @@ import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import { UserAuthContext } from "../Context/UserAuthContext";
 
 // ASSETS
-import MoroccoFlag from "../Assets/SVG/morocco-flag.jpg";
-import FranceFlag from "../Assets/SVG/france-flag.png";
-import USAFlag from "../Assets/SVG/U.S.A-flag.webp";
 import HumainAvatar from "../Assets/SVG/user-avatar.png";
+
+/*--- IMPORT HELPER / UTILS ---*/
+import StatisticsAPI from "../Apis/statistics.api";
+import ProfilesTagsAPI from "../Apis/tags.api";
 
 function DashboardMain() {
   // STATE MANAGEMENT
@@ -28,6 +30,15 @@ function DashboardMain() {
   const [qrTagID, setQrTagID] = useState();
   const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [avatar, setAvatar] = useState("");
+  const [metrics, setMetrics] = useState({});
+  const [profiles, setProfiles] = useState([]);
+  const [topVisits, setTopVisits] = useState([]);
+  const [profileInfo, setProfileInfo] = useState({});
+  const [updateProfile, setUpdateProfile] = useState({});
+  const [alertShow, setAlertShow] = useState(null);
+  const [alertContext, setAlertContext] = useState(null);
+
+  const { user, dispatch } = useContext(UserAuthContext);
 
   // HANDLE POPUP UPDATE (OPEN & CLOSE) MODAL
   const handlePopupUpdate = (e) => {
@@ -37,12 +48,121 @@ function DashboardMain() {
     getQrTagInfo(e.target.parentElement.value);
   };
 
+  // FETCH HTTP DATA ONCOMPONENT LOAD
+  useEffect(() => {
+    const getClientMetrics = async () => {
+      try {
+        await StatisticsAPI.getDashboardStatistics(
+          user._id,
+          (err, Client_Metrics) => {
+            if (err) {
+              alert(err);
+              return;
+            }
+
+            /*if (Client_Metrics) {
+              // APPEND METRICS OBJECT
+              setMetrics({
+                total_profiles: Client_Metrics["total_profiles"],
+                total_visits: Client_Metrics["total_visits"],
+                last_ip_visit: Client_Metrics["last_ip_visit"],
+              });
+              setTopVisits(Client_Metrics.top_countries);
+              console.log("---- top countries ----");
+              console.log(Client_Metrics.top_countries);
+            }*/
+
+            switch (Client_Metrics.codeKey) {
+              case 0:
+                alert(Client_Metrics.message);
+                break;
+              case 1:
+                // APPEND METRICS OBJECT
+                // APPEND METRICS OBJECT
+                setMetrics({
+                  total_profiles: Client_Metrics["total_profiles"],
+                  total_visits: Client_Metrics["total_visits"],
+                  last_ip_visit: Client_Metrics["last_ip_visit"],
+                });
+                setTopVisits(Client_Metrics.top_countries);
+                break;
+              default:
+                return null;
+            }
+          },
+        );
+      } catch (err) {
+        alert(err);
+        console.error(err);
+      }
+    };
+    const getClientProfiles = async () => {
+      try {
+        await StatisticsAPI.getAllProfileTags(user._id, (err, PROFILES) => {
+          if (err) {
+            alert(err);
+            return;
+          }
+
+          switch (PROFILES.codeKey) {
+            case 0:
+              alert(PROFILES.message);
+              break;
+            case 1:
+              if (PROFILES.profiles_tags.length > 0) {
+                setProfiles(PROFILES.profiles_tags);
+              } else {
+                setProfiles([]);
+              }
+              break;
+            default:
+              return null;
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getClientMetrics();
+    getClientProfiles();
+  }, []);
+
   // RETRIVE QR TAG INFORMATION
-  const getQrTagInfo = (ID_TAG) => {
+  const getQrTagInfo = async (ID_TAG) => {
     // API HTTP CALL : GET QR TAG INFORMATION
-    if (ID_TAG.length > 0 && ID_TAG !== undefined) {
-      alert("GETTING QR TAG INFO: " + ID_TAG);
+    alert(ID_TAG);
+    try {
+      await ProfilesTagsAPI.showProfileInfo(ID_TAG, (err, PAYLOAD) => {
+        if (err) {
+          alert(err);
+          return;
+        }
+
+        console.log(PAYLOAD);
+
+        switch (PAYLOAD.codeKey) {
+          case 0:
+            alert(PAYLOAD.message);
+            break;
+          case 1:
+            setProfileInfo(PAYLOAD.profile_data);
+            break;
+          default:
+            return null;
+        }
+      });
+    } catch (err) {
+      alert(err.message);
+      console.error(err.message);
     }
+  };
+
+  // HANDLE  UPDATE FORM INPUT
+  const handleInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setUpdateProfile((values) => ({ ...values, [name]: value }));
   };
 
   // HANDLE SIGNUP PASSWORD SWITCH INPUT
@@ -88,7 +208,45 @@ function DashboardMain() {
 
     toBase64(FILE).then((AVATAR) => {
       setAvatar(AVATAR);
+      // APPEND PROFILE AVATAR
+      setUpdateProfile((values) => ({ ...values, profile_avatar: AVATAR }));
     });
+  };
+
+  // HANDLE UPDATE FORM SUBMIT
+  const handleUpdateSubmit = async (event) => {
+    event.preventDefault();
+    // CHECK IF UPDATE PROFILE HAS PROPERTIES
+    if (Object.keys(updateProfile).length > 0) {
+      alert("YEAAH! Profile Updated ");
+      try {
+        await ProfilesTagsAPI.updateProfileTag(
+          profileInfo._id,
+          updateProfile,
+          (err, PROFILE) => {
+            if (err) {
+              alert(err);
+              console.error(err);
+              return;
+            }
+
+            if (PROFILE.isProfileUpdated) {
+              // ALERT SUCCESS MESSAGE
+              setAlertShow(true);
+              setAlertContext("Profile Tag Successfully Updated !");
+            } else {
+              setAlertShow(false);
+              setAlertContext("Profile Tag Update Operation Failed:(");
+            }
+          },
+        );
+      } catch (err) {
+        alert(err);
+        console.error(err);
+      }
+    } else {
+      alert("Profile properties got empty :(");
+    }
   };
 
   // IP LOCATION FUNCTION HANDLER
@@ -128,12 +286,35 @@ function DashboardMain() {
     borderRadius: "14px",
   };
 
+  const greeting = () => {
+    const date = new Date();
+    const hours = date.getHours();
+
+    let message;
+
+    if (hours < 12) {
+      message = "Good Morning";
+    } else if (hours < 18) {
+      message = "Good Afternoon";
+    } else {
+      message = "Good Evening";
+    }
+
+    return message;
+  };
+
+  /*const RenderVisitRow = (row) => {
+    
+  };*/
+
   return (
     <div className="container w-100">
       <div className="dashboard-containter">
         <h3 className="dash_greeting-alert">
-          Good morning, <br />{" "}
-          <span className="client-username">Mr.Mounir El bertouli</span>
+          {greeting()}, <br />{" "}
+          <span className="client-username">
+            {user.gender !== null ? user.gender : null} {user.full_name}
+          </span>
         </h3>
 
         {/*--- DASH STATISTICS AREA ---*/}
@@ -145,7 +326,9 @@ function DashboardMain() {
                   <i class="bx bx-show"></i>
                 </div>
                 <div className="statis_data_wrapper">
-                  <span className="statis_data">127</span>
+                  <span className="statis_data">
+                    {metrics.total_visits ? metrics.total_visits : "0"}
+                  </span>
                   <span className="statis_label">Total Visits</span>
                 </div>
               </div>
@@ -156,7 +339,9 @@ function DashboardMain() {
                   <i class="bx bx-qr-scan"></i>
                 </div>
                 <div className="statis_data_wrapper">
-                  <span className="statis_data">7</span>
+                  <span className="statis_data">
+                    {metrics.total_profiles ? metrics.total_profiles : "0"}
+                  </span>
                   <span className="statis_label">Total ID Tags</span>
                 </div>
               </div>
@@ -167,7 +352,11 @@ function DashboardMain() {
                   <i class="bx bx-trip"></i>
                 </div>
                 <div className="statis_data_wrapper">
-                  <span className="statis_data">41.83.12.9</span>
+                  <span className="statis_data">
+                    {metrics.last_ip_visit !== "0.0.0.0"
+                      ? metrics.last_ip_visit
+                      : "No record"}
+                  </span>
                   <span className="statis_label">Last Visit IP</span>
                 </div>
               </div>
@@ -177,91 +366,46 @@ function DashboardMain() {
 
         {/*--- TOP 20 VISITED COUNTRIES LIST SECTION ---*/}
         <section className="dash_countries_visited_section">
-          <h3 className="dash_section_label"># Top 20 visited countries</h3>
+          <h3 className="dash_section_label"># visits deomographic</h3>
           <div className="row w-100 mt-4">
             <div className="col-md-6 col-sm-12 col-6">
               <div className="dash_countries_list">
-                <List
-                  sx={{
-                    width: "100%",
-                    maxWidth: "100%",
-                    bgcolor: "background.paper",
-                    position: "relative",
-                    overflow: "auto",
-                    maxHeight: 300,
-                  }}
-                >
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar alt="Morocco" src={MoroccoFlag} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: "500",
-                        fontSize: "17px",
-                      }}
-                      primary="Morocco"
-                      secondary="41.83.128.22"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar alt="U.S.A" src={USAFlag} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: "500",
-                        fontSize: "17px",
-                      }}
-                      primary="United States Of America"
-                      secondary="36.82.128.11"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar alt="France" src={FranceFlag} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: "500",
-                        fontSize: "17px",
-                      }}
-                      primary="France"
-                      secondary="129.83.53.18"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar alt="France" src={FranceFlag} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: "500",
-                        fontSize: "17px",
-                      }}
-                      primary="France"
-                      secondary="129.83.53.18"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar alt="France" src={FranceFlag} />
-                    </ListItemAvatar>
-                    <ListItemText
-                      style={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontWeight: "500",
-                        fontSize: "17px",
-                      }}
-                      primary="France"
-                      secondary="129.83.53.18"
-                    />
-                  </ListItem>
-                </List>
+                {topVisits.length > 0 ? (
+                  <List
+                    sx={{
+                      width: "100%",
+                      maxWidth: "100%",
+                      bgcolor: "background.paper",
+                      position: "relative",
+                      overflow: "auto",
+                      maxHeight: 300,
+                    }}
+                  >
+                    {topVisits.map((visit, index) => {
+                      return (
+                        <ListItem key={index}>
+                          <ListItemAvatar>
+                            <Avatar
+                              alt={`${visit.country} / ${visit.city}`}
+                              src={visit.country}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            style={{
+                              fontFamily: "Montserrat, sans-serif",
+                              fontWeight: "500",
+                              fontSize: "17px",
+                            }}
+                            primary={`${visit.country} / ${visit.city}`}
+                            secondary={visit.visit_ip}
+                          />
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                ) : (
+                  <h3 className="block_alert">No Record Found</h3>
+                )}
               </div>
             </div>
             <div className="col-md-6 col-sm-12 col-6">
@@ -291,7 +435,7 @@ function DashboardMain() {
                         src={
                           location.location !== undefined
                             ? location.location.country_flag
-                            : MoroccoFlag
+                            : null
                         }
                         alt="Flag Country"
                       />
@@ -360,66 +504,52 @@ function DashboardMain() {
           <h4 className="dash_section_label"># Last Qr Code ID Tags</h4>
           <div className="container">
             <div className="row w-100 mt-4">
-              <div className="col-md-4 col-sm-12 col-4 mb-3">
-                <div className="qrcode-tag-box-container">
-                  <div className="qrcode-icon-wrapper-top">
-                    <i class="bx bx-qr-scan"></i>
-                  </div>
-                  <div className="tag-box-header">
-                    <img src={USAFlag} alt="Profile Avatar" />
-                  </div>
-                  <div className="tag-box-body">
-                    <h3 className="tag-consumer-name">Delary Fulton</h3>
-                    <span className="tag-consumer-id">#LGN837547</span>
-                  </div>
-                  <div className="tag-box-tail">
-                    <button
-                      className="tag-edit-btn"
-                      value="LGN982983"
-                      onClick={(e) => handlePopupUpdate(e)}
-                      type="button"
-                    >
-                      <i class="bx bx-edit-alt"></i>
-                    </button>
-                    <button className="tag-remove-btn" type="button">
-                      <i class="bx bxs-trash-alt"></i>
-                    </button>
-                  </div>
-                  <div className="qrcode-icon-wrapper-bottom">
-                    <i class="bx bx-qr-scan"></i>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 col-sm-12 col-4 mb-3">
-                <div className="qrcode-tag-box-container">
-                  <div className="qrcode-icon-wrapper-top">
-                    <i class="bx bx-qr-scan"></i>
-                  </div>
-                  <div className="tag-box-header">
-                    <img src={FranceFlag} alt="Profile Avatar" />
-                  </div>
-                  <div className="tag-box-body">
-                    <h3 className="tag-consumer-name">Jeannie Paculba</h3>
-                    <span className="tag-consumer-id">#LGN73624</span>
-                  </div>
-                  <div className="tag-box-tail">
-                    <button
-                      className="tag-edit-btn"
-                      value="LGN11118888"
-                      onClick={(e) => handlePopupUpdate(e)}
-                      type="button"
-                    >
-                      <i class="bx bx-edit-alt"></i>
-                    </button>
-                    <button className="tag-remove-btn" type="button">
-                      <i class="bx bxs-trash-alt"></i>
-                    </button>
-                  </div>
-                  <div className="qrcode-icon-wrapper-bottom">
-                    <i class="bx bx-qr-scan"></i>
-                  </div>
-                </div>
-              </div>
+              {profiles.length > 0
+                ? profiles.map((profile, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className="col-md-4 col-sm-12 col-4 mb-3"
+                      >
+                        <div className="qrcode-tag-box-container">
+                          <div className="qrcode-icon-wrapper-top">
+                            <i class="bx bx-qr-scan"></i>
+                          </div>
+                          <div className="tag-box-header">
+                            <img
+                              src={profile.profile_avatar}
+                              alt="Profile Avatar"
+                            />
+                          </div>
+                          <div className="tag-box-body">
+                            <h3 className="tag-consumer-name">
+                              {profile.full_name}
+                            </h3>
+                            <span className="tag-consumer-id">
+                              #{profile.tag_id}
+                            </span>
+                          </div>
+                          <div className="tag-box-tail">
+                            <button
+                              className="tag-edit-btn"
+                              value={profile._id}
+                              onClick={(e) => handlePopupUpdate(e)}
+                              type="button"
+                            >
+                              <i class="bx bx-edit-alt"></i>
+                            </button>
+                            <button className="tag-remove-btn" type="button">
+                              <i class="bx bxs-trash-alt"></i>
+                            </button>
+                          </div>
+                          <div className="qrcode-icon-wrapper-bottom">
+                            <i class="bx bx-qr-scan"></i>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                : null}
               <div className="col-md-4 col-sm-12 col-4 mb-3">
                 <div className="qrcode-create-new-box">
                   <div className="qrcode-icon-wrapper-top">
@@ -444,7 +574,7 @@ function DashboardMain() {
           </div>
         </section>
       </div>
-      {/*--- LOGIN POPUP MODAL ---*/}
+      {/*--- PROFILE TAG POPUP MODAL ---*/}
       <Modal
         open={popupUpdate}
         onClose={(e) => setPopupUpdate(false)}
@@ -457,13 +587,17 @@ function DashboardMain() {
             <div className="qrtag-modal-header">
               <div className="loster_profile_avtr_wrapper">
                 <img
-                  src={avatar || HumainAvatar}
-                  alt="Loster Profile Avatar - Lgani service"
+                  src={
+                    updateProfile.profile_avatar ||
+                    profileInfo.profile_avatar ||
+                    HumainAvatar
+                  }
+                  alt="Loster Profile Avatar - Ajidq service"
                 />
               </div>
             </div>
             {/*--- LOSTER (PET / HUMAIN) INFO FORM ---*/}
-            <form className="loster_info_form">
+            <form className="loster_info_form" onSubmit={handleUpdateSubmit}>
               <div className="form-row">
                 <div className="form-group col-sm-1é col-sm-12 col-12">
                   <div class="file-input">
@@ -482,6 +616,18 @@ function DashboardMain() {
                   </div>
                 </div>
               </div>
+              {/*--ALERT CONTEXT --*/}
+              {alertShow ? (
+                <Alert severity="success">
+                  <AlertTitle>Operation Sucsess</AlertTitle>
+                  {alertContext}
+                </Alert>
+              ) : alertShow === false ? (
+                <Alert severity="error">
+                  <AlertTitle>Operation Failed !</AlertTitle>
+                  {alertContext}
+                </Alert>
+              ) : null}
               {/*--- LOSTER INFO AREA  ---*/}
               <span className="dash_form_label"># Loster Information</span>
               <div className="form-row">
@@ -489,23 +635,36 @@ function DashboardMain() {
                   <input
                     type="text"
                     className="form-control loster_form_input"
-                    name="loster_fname"
+                    name="first_name"
                     placeholder="First Name"
+                    onChange={handleInputChange}
+                    value={
+                      updateProfile.first_name || profileInfo.first_name || ""
+                    }
                   ></input>
                 </div>
                 <div className="form-group col-md-6 col-sm-6 col-6">
                   <input
                     type="text"
                     className="form-control loster_form_input"
-                    name="loster_lname"
+                    name="last_name"
                     placeholder="Last Name"
+                    onChange={handleInputChange}
+                    value={
+                      updateProfile.last_name || profileInfo.last_name || ""
+                    }
                   ></input>
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group col-md-6 col-sm-6 col-6">
-                  <select name="loster_gender" className="form-select mr-sm-2">
-                    <option selected>Select gender</option>
+                  <select
+                    name="gender"
+                    value={updateProfile.gender || profileInfo.gender}
+                    onChange={handleInputChange}
+                    className="form-select mr-sm-2"
+                  >
+                    <option selected>Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                   </select>
@@ -514,7 +673,9 @@ function DashboardMain() {
                   <input
                     type="number"
                     className="form-control loster_form_input"
-                    name="loster_age"
+                    name="age"
+                    value={updateProfile.age || profileInfo.age}
+                    onChange={handleInputChange}
                     placeholder="Enter Age"
                   ></input>
                 </div>
@@ -524,14 +685,18 @@ function DashboardMain() {
                   <input
                     type="text"
                     className="form-control loster_form_input"
-                    name="loster_color"
+                    name="body_color"
                     placeholder="Body Color"
+                    onChange={handleInputChange}
+                    value={updateProfile.body_color || profileInfo.body_color}
                   ></input>
                 </div>
                 <div className="form-group col-md-6 col-sm-6 col-6">
                   <select
-                    name="loster_object_type"
+                    name="object_type"
                     className="form-select mr-sm-2"
+                    onChange={handleInputChange}
+                    value={updateProfile.object_type || profileInfo.object_type}
                   >
                     <option selected>Select Object Type</option>
                     <option value="Pet">Pets</option>
@@ -548,15 +713,29 @@ function DashboardMain() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={isGPSEnabled}
+                      checked={
+                        updateProfile.isGPSEnable || profileInfo.isGPSEnable
+                      }
                       color="warning"
-                      onChange={handleSignupSwitch}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setUpdateProfile((values) => ({
+                            ...values,
+                            isGPSEnable: true,
+                          }));
+                        } else {
+                          setUpdateProfile((values) => ({
+                            ...values,
+                            isGPSEnable: false,
+                          }));
+                        }
+                      }}
                     />
                   }
                   label="Disbale / Enable"
                 />
               </FormGroup>
-              {isGPSEnabled ? (
+              {updateProfile.isGPSEnable || profileInfo.isGPSEnable ? (
                 <div className="privacy_hint_alert">
                   <Alert severity="warning">
                     <AlertTitle>Note</AlertTitle>
@@ -567,7 +746,9 @@ function DashboardMain() {
                 </div>
               ) : null}
               <div className="form_create_btn_wrapper">
-                <button className="create-btn">Create Now</button>
+                <button className="create-btn" type="submit">
+                  Update
+                </button>
               </div>
             </form>
           </section>

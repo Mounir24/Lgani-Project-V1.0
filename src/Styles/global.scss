@@ -19,6 +19,7 @@
 @import "./Components/Settings";
 @import "./Components/QrTags";
 @import "./Components/LosterProfile";
+@import "./Components/Confirmation";
 
 
 * {
@@ -161,6 +162,18 @@ input {
     font-weight: 500 !important;
     font-size: 15px !important;
     text-transform: capitalize !important;
+}
+
+.menu_link {
+    @include Font($robotoCD, 200, 15px, $titles_clr);
+    margin-left: 0.5rem !important;
+    @include Displayed(space-between, row);
+}
+
+.block_alert {
+    @include Font($robotoCD, 200, 15px, $titles_clr);
+    margin-left: 0.5rem !important;
+    text-align: center;
 }
 
 

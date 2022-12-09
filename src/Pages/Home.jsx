@@ -5,23 +5,46 @@ import { UserAuthContext } from "../Context/UserAuthContext";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { useNavigate } from "react-router-dom";
 
 // IMPORT ASSETS (IMAGES -  SVG - GIFs)
+// PETS ASSETS
 import Step1 from "../Assets/Images/step1.png";
 import Step2 from "../Assets/Images/step2.png";
 import Step3 from "../Assets/Images/step3.png";
 import Step4 from "../Assets/Images/step4.png";
-import AboutSRV from "../Assets/SVG/about-us-forground.png";
+
+// HUMAINS ASSETS
+import Humain1 from "../Assets/Images/humain-1.png";
+import Humain2 from "../Assets/Images/humain-2.png";
+import Humain3 from "../Assets/Images/humain-3.png";
+import Humain4 from "../Assets/Images/humain-4.png";
+
+import AboutSRV from "../Assets/Images/about-us.png";
 import CheckMark from "../Assets/SVG/check.png";
+
+/*--- IMPORT HELPER / UTILS ---*/
+import AuthAPI from "../Apis/auth.api";
 
 function Home() {
   // STATE MANAGEMENT
   const [isSignupOpen, setIsSignupOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSectionSwitched, setIsSectionSwitched] = useState(false);
+  const [account, setAccount] = useState({});
+  const [isUserRegistered, setIsUserRegistered] = useState(null);
+  const [userEmail, setUserEmail] = useState("");
+  const [msgError, setMsgError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoginError, setIsLoginError] = useState(null);
+  const [loginError, setLoginError] = useState("");
+  const [isRedirectLoading, setIsRedirectLoading] = useState(false);
 
   const { signup_open: open, dispatch } = useContext(UserAuthContext);
   const { login_open } = useContext(UserAuthContext);
+  const navigateTo = useNavigate();
 
   // HANDLE SIGNUP CLOSE MODAL
   const handlePopupClose = () => {
@@ -65,6 +88,134 @@ function Home() {
     }
   };
 
+  // HANDLE REGISTER FORM INPUTS
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    setAccount((values) => ({ ...values, [name]: value }));
+  };
+
+  // HANDLE SUBMIT USER DATA - REGISTER CLIENT
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    if (Object.keys(account).length > 0 && account !== undefined) {
+      // CREATE NEW USER -->
+      try {
+        setIsLoading(true);
+        await AuthAPI.resgiterClient(account, (err, PAYLOAD) => {
+          if (err) {
+            console.error(err);
+            setIsUserRegistered(false);
+            return setMsgError(err.message || "Error raised :(");
+          }
+
+          if (Array.isArray(PAYLOAD)) {
+            // CHECK IF THE ERRORS ARRAY CONTAINS MORE THAN +1 OBJECT ERROR
+            if (PAYLOAD.length > 0) {
+              //let genericErrorString;
+              let errorsSK = [];
+              const errors_stack = PAYLOAD.map((error_obj) => {
+                const errorMsg = error_obj.msg;
+                const inputParam = error_obj.param;
+                errorsSK.push(`* ${inputParam}: ${errorMsg} \n`);
+                return errorsSK;
+              });
+              setIsUserRegistered(false);
+              setMsgError(
+                errors_stack.map((error) => {
+                  return error;
+                }),
+              );
+              setIsLoading(false);
+            } else {
+              const errorMsg = PAYLOAD[0].msg;
+              const inputParam = PAYLOAD[0].param;
+              setIsUserRegistered(false);
+              setMsgError(`* ${inputParam}: ${errorMsg} \n`);
+              setIsLoading(false);
+            }
+          }
+
+          switch (PAYLOAD.isCreated) {
+            case false:
+              setIsUserRegistered(PAYLOAD.isCreated);
+              setMsgError(PAYLOAD.message);
+              setIsLoading(false);
+              break;
+            case true:
+              setIsUserRegistered(PAYLOAD["isCreated"]);
+              setUserEmail(PAYLOAD["registeredEmail"]);
+              setIsLoading(false);
+              break;
+            default:
+              return null;
+          }
+          setIsLoading(false);
+        });
+      } catch (err) {
+        setMsgError("Something went wrong :(");
+        console.log(err);
+      }
+    } else {
+      setMsgError("Client regsiter form data empty :(");
+      setIsLoading(false);
+    }
+  };
+
+  // HANDLE SUBMIT USER DATA - AUTHENTICATE CLIENT
+  const handleLoginFormSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    if (Object.keys(account).length > 0 && account !== undefined) {
+      // CREATE NEW USER -->
+      try {
+        await AuthAPI.AuthClientLogin(account, (err, CLIENT) => {
+          if (err) {
+            alert(err);
+            setIsLoginError(true);
+            setLoginError(err || "Auth Login Failed :(");
+            setIsLoading(false);
+            return;
+          }
+
+          switch (CLIENT.isLoged) {
+            case false:
+              setIsLoginError(true);
+              setLoginError(CLIENT.message);
+              setIsLoading(false);
+              break;
+            case true:
+              setIsLoginError(false);
+              setIsLoading(false);
+              dispatch({
+                type: "LOGOUT",
+              });
+              dispatch({
+                type: "LOGIN_SUCCESS",
+                payload: CLIENT.user_payload,
+              });
+              setIsRedirectLoading(true);
+              setTimeout(() => {
+                navigateTo("/dashboard/home");
+              }, 2000);
+              break;
+            default:
+              return null;
+          }
+          setIsLoading(false);
+        });
+      } catch (err) {
+        setMsgError("Something went wrong :(");
+        console.log(err);
+      }
+    } else {
+      setIsLoginError(true);
+      setLoginError("Client login form data empty :(");
+      setIsLoading(false);
+    }
+  };
+
   // MODAL STYLE
   const modalStyle = {
     position: "absolute",
@@ -78,7 +229,14 @@ function Home() {
   };
 
   return (
-    <main className="l-home-container">
+    <main
+      className="l-home-container"
+      style={{
+        filter: isRedirectLoading ? "blur(20px)" : "blur(0px)",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       {/*--- HOME - HERO BANNER ---*/}
       <div className="hero-section-container">
         <div className="shape-right"></div>
@@ -96,7 +254,7 @@ function Home() {
         <div className="shape-left"></div>
       </div>
       {/*--- HOME - HOW ITS WORKS SECTION ---*/}
-      <section className="home-how-it-works">
+      <section className="home-how-it-works" id="how-it-works">
         <div className="container mt-5">
           <h1 className="section-label">How it works</h1>
           <div className="home-setting-row">
@@ -195,7 +353,7 @@ function Home() {
                 <div className="step-box-container">
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step1} alt="Lgani - How it works? step 1" />
+                    <img src={Humain1} alt="Lgani - How it works? step 1" />
                   </div>
 
                   {/*--STEP BOX CONTENT --*/}
@@ -225,7 +383,7 @@ function Home() {
                   </div>
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step2} alt="Lgani - How it works? step 2" />
+                    <img src={Humain2} alt="Lgani - How it works? step 2" />
                   </div>
                 </div>
               </div>
@@ -233,7 +391,7 @@ function Home() {
                 <div className="step-box-container">
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step3} alt="Lgani - How it works? step 3" />
+                    <img src={Humain3} alt="Lgani - How it works? step 3" />
                   </div>
 
                   {/*--STEP BOX CONTENT --*/}
@@ -263,7 +421,7 @@ function Home() {
                   </div>
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step4} alt="Lgani - How it works? step 4" />
+                    <img src={Humain4} alt="Lgani - How it works? step 4" />
                   </div>
                 </div>
               </div>
@@ -276,7 +434,7 @@ function Home() {
       <section className="home-about-lgani">
         <div className="container mt-5">
           <h1 className="section-label">
-            Why <span className="brand_name">Lgani</span> service{" "}
+            Why <span className="brand_name">Ajidq</span> service{" "}
           </h1>
           <div className="row w-100 mt-5">
             <div className="col-md-6 col-6 col-sm-12">
@@ -290,7 +448,7 @@ function Home() {
             <div className="col-md-6 col-6 col-sm-12">
               <div className="box-content-wrapper">
                 <p className="content-desc">
-                  Lgani ID tag provides much more vital information to the
+                  Ajidq ID tag provides much more vital information to the
                   finders when your pet goes missing, such as multiple contact
                   details, pet medical conditions, allergies, dietary needs and
                   more.
@@ -388,17 +546,14 @@ function Home() {
             <div className="col-md-4 col-sm-12 col-4">
               <div className="box-container">
                 <div className="box-icon-wrapper">
-                  <i class="bx bx-qr-scan"></i>
+                  <i class="bx bx-user-plus"></i>
                 </div>
                 <div className="box-content-wrapper">
-                  <h3 className="box-label">1. Order your tag</h3>
-                  <p className="box-desc">
-                    Order your Qr ID tag from our online shop, simple and
-                    secure
-                  </p>
+                  <h3 className="box-label">1. Create your account</h3>
+                  <p className="box-desc">Create your Ajidq account</p>
                   {/*-- --*/}
                   <button className="box-btn" type="button">
-                    Order Qr ID Tag
+                    Create an account
                   </button>
                 </div>
               </div>
@@ -406,19 +561,19 @@ function Home() {
             <div className="col-md-4 col-sm-12 col-4">
               <div className="box-container">
                 <div className="box-icon-wrapper">
-                  <i class="bx bx-user-plus"></i>
+                  <i class="bx bx-qr-scan"></i>
                 </div>
                 <div className="box-content-wrapper">
-                  <h3 className="box-label">2. Create your account</h3>
+                  <h3 className="box-label">2. Select Qr Tag Product</h3>
                   <p className="box-desc">
-                    Create your lgani account and create your pet's / humain's profile
+                    Select your minimalist design Qr tag product
                   </p>
                   <button
                     className="box-btn"
                     onClick={handleSignupPopupOpen1}
                     type="button"
                   >
-                    Create An Account
+                    Pick a product
                   </button>
                 </div>
               </div>
@@ -429,12 +584,12 @@ function Home() {
                   <i class="bx bx-link"></i>
                 </div>
                 <div className="box-content-wrapper">
-                  <h3 className="box-label">3. Activate Your Tag</h3>
+                  <h3 className="box-label">3. Create a Qr Tag profile</h3>
                   <p className="box-desc">
-                    Update your pet's profile and attach to the PetQ ID tag
+                    create your pet's / humain's profile & make it live
                   </p>
                   <button className="box-btn" type="button">
-                    Activate TAG
+                    Create profile
                   </button>
                 </div>
               </div>
@@ -540,13 +695,26 @@ function Home() {
         <Box sx={{ ...modalStyle, width: 550 }}>
           <section className="register_modal_container">
             <h3 className="modal_label">Create New Account</h3>
-            <form className="mt-4">
+            {isUserRegistered ? (
+              <Alert severity="success">
+                <AlertTitle>Great Step !</AlertTitle>
+                confirmation link has been sent to : {userEmail}
+              </Alert>
+            ) : isUserRegistered === false ? (
+              <Alert severity="error">
+                <AlertTitle>Register Failed !</AlertTitle>
+                {msgError}
+              </Alert>
+            ) : null}
+            <form className="mt-4" onSubmit={handleFormSubmit}>
               <div className="form-row">
                 <div className="form-group col-md-6">
                   <input
                     type="text"
                     className="form-control signup_modal_input"
                     name="first_name"
+                    onChange={handleChange}
+                    value={account.first_name}
                     placeholder="First Name"
                   ></input>
                 </div>
@@ -555,6 +723,8 @@ function Home() {
                     type="text"
                     className="form-control signup_modal_input"
                     name="last_name"
+                    onChange={handleChange}
+                    value={account.last_name}
                     placeholder="Last Name"
                   ></input>
                 </div>
@@ -565,6 +735,8 @@ function Home() {
                     type="text"
                     className="form-control signup_modal_input"
                     name="email"
+                    onChange={handleChange}
+                    value={account.email}
                     placeholder="E-mail address"
                   ></input>
                 </div>
@@ -575,6 +747,8 @@ function Home() {
                     type={isSignupOpen ? "text" : "password"}
                     className="form-control signup_modal_input"
                     name="password"
+                    onChange={handleChange}
+                    value={account.password}
                     placeholder="Password"
                   ></input>
                 </div>
@@ -583,6 +757,8 @@ function Home() {
                     type={isSignupOpen ? "text" : "password"}
                     className="form-control signup_modal_input"
                     name="re_password"
+                    onChange={handleChange}
+                    value={account.re_password}
                     placeholder="Confirm Password"
                   ></input>
                 </div>
@@ -601,8 +777,8 @@ function Home() {
                 />
               </FormGroup>
 
-              <button type="button" className="register-btn">
-                Register
+              <button type="submit" className="register-btn">
+                {isLoading ? "Wait..." : "Register"}
               </button>
             </form>
           </section>
@@ -619,14 +795,27 @@ function Home() {
         <Box sx={{ ...modalStyle, width: 550 }}>
           <section className="login_modal_container">
             <h3 className="modal_label">Login</h3>
-            <form className="mt-4">
+            {isLoginError === false ? (
+              <Alert severity="success">
+                <AlertTitle>Successfuly Authenticated !</AlertTitle>
+                You Will redirect after 2 seconds
+              </Alert>
+            ) : isLoginError === true ? (
+              <Alert severity="error">
+                <AlertTitle>Authentication Failed !</AlertTitle>
+                {loginError}
+              </Alert>
+            ) : null}
+            <form className="mt-4" onSubmit={handleLoginFormSubmit}>
               <div className="form-row">
                 <div className="form-group col-md-12">
                   <input
                     type="text"
                     className="form-control login_modal_input"
                     name="email"
-                    placeholder="e-mail address"
+                    onChange={handleChange}
+                    value={account.email}
+                    placeholder="Email address"
                   ></input>
                 </div>
               </div>
@@ -636,6 +825,8 @@ function Home() {
                     type={isLoginOpen ? "text" : "password"}
                     className="form-control login_modal_input"
                     name="password"
+                    onChange={handleChange}
+                    value={account.password}
                     placeholder="Password"
                   ></input>
                 </div>
@@ -644,6 +835,8 @@ function Home() {
                     type={isLoginOpen ? "text" : "password"}
                     className="form-control login_modal_input"
                     name="re_password"
+                    onChange={handleChange}
+                    value={account.re_password}
                     placeholder="Confirm Password"
                   ></input>
                 </div>
@@ -661,8 +854,8 @@ function Home() {
                   label="Show Password"
                 />
               </FormGroup>
-              <button type="button" className="login-btn">
-                Login
+              <button type="submit" className="login-btn">
+                {isLoading ? "Authenticating..." : "Login"}
               </button>
             </form>
           </section>

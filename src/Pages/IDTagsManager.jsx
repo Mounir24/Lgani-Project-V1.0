@@ -143,9 +143,30 @@ function IDTagsManager() {
       },
     },
     {
+      field: "profile_visits",
+      headerName: "Total Visits",
+      width: 120,
+      renderCell: ({ row }) => {
+        const total_visits = row.profile_visits;
+        return (
+          <div style={{ width: "100%", textAlign: "center", margin: "0 auto" }}>
+            <span
+              style={{
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: "16px",
+                padding: "2px 10px",
+              }}
+            >
+              {total_visits}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
       field: "profile_link",
       headerName: "Profile Link",
-      width: 175,
+      width: 120,
       renderCell: ({ row }) => {
         const profile_link = row.profile_link;
         return (
@@ -157,7 +178,14 @@ function IDTagsManager() {
                 padding: "2px 10px",
               }}
             >
-              {profile_link}
+              <a
+                href={profile_link}
+                className="profile-view-btn"
+                rel="noreferrer"
+                target="_blank"
+              >
+                View
+              </a>
             </span>
           </div>
         );
@@ -177,7 +205,7 @@ function IDTagsManager() {
               <option selected>Actions</option>
               <option value="block">Block</option>
               <option value="remove">Remove</option>
-              <option value="maintenance_mode">Maintenance Mode</option>
+              <option value="unblock">Unblock</option>
             </select>
           </div>
         );
@@ -193,7 +221,8 @@ function IDTagsManager() {
       profile_avtr: "my profile",
       issued_date: "2022/02/21",
       status: "Active",
-      profile_link: "www.lgani.com/delary_fl",
+      profile_visits: 834,
+      profile_link: "http://localhost:3000/profile/delary_fl",
     },
     {
       id: 2,
@@ -202,7 +231,8 @@ function IDTagsManager() {
       profile_avtr: "my profile",
       issued_date: "2022/09/21",
       status: "Active",
-      profile_link: "www.lgani.com/parkov_alex",
+      profile_visits: 434,
+      profile_link: "http://localhost:3000/profile/parkov_alex",
     },
     {
       id: 3,
@@ -211,7 +241,8 @@ function IDTagsManager() {
       profile_avtr: "my profile",
       issued_date: "2020/09/21",
       status: "Inactive",
-      profile_link: "www.lgani.com/mounir_el",
+      profile_visits: 734,
+      profile_link: "http://localhost:3000/profile/mounir_el",
     },
   ];
 

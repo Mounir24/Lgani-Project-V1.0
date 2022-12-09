@@ -1,12 +1,23 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserAuthContext } from "../Context/UserAuthContext";
+import Avatar from "@mui/material/Avatar";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 // IMPORT ASSETS (LOGO - ...)
 import Logo from "../Assets/ajidq-logo.png";
+import HumainAvatar from "../Assets/SVG/user-avatar.png";
 
 function Header() {
-  const { dispatch } = useContext(UserAuthContext);
+  // STATE MANGEMENT
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const { dispatch, user } = useContext(UserAuthContext);
 
   //HANDLE OPEN CREATE CATEGORY MODAL
   const handleSignupPopupOpen = () => {
@@ -35,7 +46,7 @@ function Header() {
         </button>
         <Link to="/" className="logo-wrapper">
           {/*---<i class="bx bxl-meta"></i>---*/}
-          <img src={Logo} alt="Lgani" />
+          <img src={Logo} alt="Ajidq - Smart Qr tags" />
         </Link>
         {/*--- HEADER LINKS ---*/}
         <div className="collapse navbar-collapse" id="navbarNav">
@@ -44,29 +55,50 @@ function Header() {
               <Link to="/">Home</Link>
             </li>
             <li className="nav-item lnk-pad">
-              <Link to="/shop">Shop</Link>
-            </li>
-            <li className="nav-item lnk-pad">
-              <Link to="#get-started">Get Started</Link>
+              <Link to="/#how-it-works">How it works</Link>
             </li>
           </ul>
         </div>
         {/*--- HEADER BTNS (SIGN-UP & LOGIN)---*/}
-
-        <div className="header_btns">
-          <ul className="btn_list">
-            <li className="btn-item">
-              <button className="login-btn" onClick={handleLoginPopupOpen}>
-                Login
-              </button>
-            </li>
-            <li className="btn-item">
-              <button className="signup-btn" onClick={handleSignupPopupOpen}>
-                Register
-              </button>
-            </li>
-          </ul>
-        </div>
+        {user ? (
+          <Tooltip title={user.full_name}>
+            <IconButton
+              onClick={handleClick}
+              size="small"
+              sx={{ ml: 2 }}
+              aria-controls={open ? "account-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+            >
+              <Avatar sx={{ width: 50, height: 50 }}>
+                <img
+                  src={user.profile_avatar || HumainAvatar}
+                  alt={user.full_name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </Avatar>
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <div className="header_btns">
+            <ul className="btn_list">
+              <li className="btn-item">
+                <button className="login-btn" onClick={handleLoginPopupOpen}>
+                  Login
+                </button>
+              </li>
+              <li className="btn-item">
+                <button className="signup-btn" onClick={handleSignupPopupOpen}>
+                  Register
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
       </nav>
     </header>
   );

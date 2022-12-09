@@ -17,6 +17,7 @@ import Settings from "./Pages/Settings";
 import IDTagsManager from "./Pages/IDTagsManager";
 import NoMatch from "./Layouts/NoFound";
 import LosterProfile from "./Pages/LosterProfile";
+import Confirmation from "./Pages/Confirmation";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="qrtags-manager" element={<IDTagsManager />} />
         </Route>
         <Route path="/profile/:client_id" element={<LosterProfile />} />
+        <Route path="/confirmation" element={<Confirmation />} />
         <Route path="*" element={<NoMatch />} />
       </Routes>
       <Footer />
