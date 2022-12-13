@@ -1,0 +1,368 @@
+// IMPORT GOOGLE FONT (CDN)
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&family=Roboto+Condensed:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap');
+
+
+// IMPORT COMPONENTS FILES
+@import "./variables";
+@import "./Components/Footer";
+@import "./Components/Home";
+@import "./Components/Dashboard";
+@import "./Components/CreateTags";
+@import "./Components/Profile";
+@import "./Components/Settings";
+@import "./Components/QrTags";
+@import "./Components/LosterProfile";
+@import "./Components/Confirmation";
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    min-height: 100vh;
+    background: $secondary_clr !important;
+    overflow-x: hidden;
+}
+
+a,
+a:before,
+a:after {
+    text-decoration: none !important;
+    font-size: 16px;
+    color: $section_clr !important;
+}
+
+li,
+li:before,
+li:after {
+    list-style: none !important;
+}
+
+input {
+    text-transform: none !important;
+}
+
+/*--- SCSS FUNCTIONs ---*/
+// DISPLAYED
+@mixin Displayed($pos, $dir) {
+    display: flex;
+    justify-content: $pos;
+    align-items: center;
+    flex-direction: $dir;
+}
+
+// BUTTONS
+@mixin Button($padd, $bg) {
+    padding: $padd;
+    outline: none;
+    border: none;
+    background: $bg;
+    border-radius: 24px;
+}
+
+// FONTS
+@mixin Font($fnt, $wgt, $sz, $clr) {
+    font-family: $fnt;
+    font-weight: $wgt;
+    font-size: $sz !important;
+    color: $clr;
+    text-transform: uppercase;
+}
+
+/*--- START GLOBAL CSS VARIABLES ---*/
+.navbar-toggler {
+    border: none !important;
+    outline: none !important;
+}
+
+.bxl-meta {
+    font-size: 45px;
+    color: $primary_clr;
+}
+
+.bxs-grid-alt {
+    font-size: 28px;
+    color: $bg_clr;
+}
+
+.section-label {
+    @include Font($robotoCD, 300, 34px, $bg_clr);
+    //margin-bottom: 1.5rem;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.modal_label {
+    @include Font($poppins, 500, 24px, $titles_clr);
+    text-align: center;
+
+    &::after {
+        content: "";
+        display: block;
+        width: 100px;
+        height: 4px;
+        border-radius: 6px;
+        background: $primary_clr;
+        margin: 5px auto;
+    }
+}
+
+.signup_modal_input,
+.login_modal_input {
+    padding: 14px !important;
+    outline: none;
+    border: 2px solid #D1D1D1;
+    border-radius: 10px;
+    background: transparent !important;
+    margin: 0.10rem 0;
+    //padding-left: 1.5rem;
+    @include Font($robotoCD, 200, 14px, #111);
+
+    //border: 2px solid $secondary_clr;
+    &:focus {
+        border-color: none !important;
+        border: none !important;
+        outline: none !important;
+    }
+}
+
+.css-ahj2mt-MuiTypography-root {
+    @include Font($rajdhani, 500, 17px, #111);
+    font-family: $rajdhani !important;
+    text-transform: capitalize !important;
+    //padding-left: 0.9rem !important;
+}
+
+.css-yslrua-MuiTypography-root-MuiAlertTitle-root {
+    font-family: $montserrat !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+}
+
+.css-12mvehg-MuiPaper-root-MuiAlert-root,
+.css-1pxa9xg-MuiAlert-message {
+    font-family: $robotoCD !important;
+    font-weight: 200 !important;
+    font-size: 15px !important;
+}
+
+.css-1jbbcbn-MuiDataGrid-columnHeaderTitle {
+    font-family: $montserrat !important;
+    font-weight: 500 !important;
+    font-size: 15px !important;
+    text-transform: capitalize !important;
+}
+
+.menu_link {
+    @include Font($robotoCD, 200, 15px, $titles_clr);
+    margin-left: 0.5rem !important;
+    @include Displayed(space-between, row);
+}
+
+.block_alert {
+    @include Font($robotoCD, 200, 15px, $titles_clr);
+    margin-left: 0.5rem !important;
+    text-align: center;
+}
+
+
+/*--- END GLOBAL CSS VARIABLES ---*/
+
+/*--- START STYLING HEADER ---*/
+
+header {
+    padding: 0 1.5rem 0 1.5rem;
+    width: 100%;
+    height: auto;
+    padding: 0 1.5rem;
+    background: transparent;
+    border-bottom: 1px solid hsl(184, 5%, 40%);
+
+    .navbar {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 0 2.5rem;
+
+        .logo-wrapper {
+            width: 5.3rem;
+            height: auto;
+
+            /*img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }*/
+        }
+
+        .nav-item {
+            //@include Font($poppins, 200, 17px, hsl(184, 9%, 92%) !important);
+            @include Font($robotoCD, 200, 16px, $bg_clr !important);
+            //text-transform: capitalize !important;
+            margin-left: 1.2rem;
+
+            a {
+                font-size: 17px !important;
+            }
+        }
+
+        .header_btns {
+            padding: 0rem;
+
+            .btn_list {
+                @include Displayed(center, row);
+                padding-top: 0.9rem;
+
+                .btn-item {
+                    padding-top: 0.5rem;
+                    margin-right: 1.5rem;
+                }
+
+                .signup-btn {
+                    @include Button(10px 35px, $primary_clr);
+                    box-shadow: $bx-sh;
+                    @include Font($poppins, 200, 15px, $bg_clr !important);
+                    text-transform: capitalize !important;
+
+                    /*a {
+                        @include Font($poppins, 200, 15px, $bg_clr !important);
+                        text-transform: capitalize !important;
+                    }*/
+                }
+
+                .login-btn {
+                    @include Button(10px 35px, transparent);
+                    border: 2px solid $primary_clr;
+                    @include Font($poppins, 200, 15px, $primary_clr !important);
+                    text-transform: capitalize !important;
+
+                    /*a {
+                        @include Font($poppins, 200, 15px, $primary_clr !important);
+                        text-transform: capitalize !important;
+                    }*/
+                }
+            }
+        }
+
+        .logo-wrapper {
+            width: 4.3rem;
+            height: auto;
+
+            img {
+                width: 85%;
+                height: 85%;
+                object-fit: cover;
+            }
+        }
+    }
+}
+
+
+.loster_profile_avtr_wrapper {
+    width: 5.5rem;
+    height: 5.5rem;
+    margin: auto;
+    margin-bottom: 0.75rem;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 100%;
+    }
+}
+
+.loster_info_form {
+    width: 100%;
+    padding: 0 .75rem;
+
+    .dash_form_label {
+        @include Font($robotoCD, 200, 16px, $titles_clr);
+        text-transform: capitalize !important;
+    }
+
+    .file-input {
+        width: 85%;
+        margin: 0.75rem auto;
+
+        @include Displayed(center, column);
+
+        .file {
+            opacity: 0;
+            width: 0.1px;
+            height: 0.1px;
+            position: absolute;
+        }
+
+        label {
+            display: block;
+            position: relative;
+            //width: 15rem;
+            padding: 7px 20px;
+            border-radius: 25px;
+            background: $secondary_clr;
+            //box-shadow: $bx-sh;
+            @include Displayed(center, row);
+            @include Font($robotoCD, 200, 15px, $bg_clr);
+            cursor: pointer;
+            transition: transform .2s ease-out;
+
+            .bx-cloud-upload {
+                font-size: 26px;
+                color: $bg_clr;
+                margin-right: 0.75rem;
+            }
+        }
+
+        .file-name-info {
+            margin-top: 0.75rem;
+            @include Font($robotoCD, 200, 15px, $titles_clr);
+        }
+    }
+
+
+    input[type="text"],
+    input[type="number"],
+    select {
+        padding: 15px !important;
+        outline: none;
+        border: 1px solid #D1D1D1;
+        border-radius: 10px;
+        background: transparent !important;
+        margin: 0.25rem 0;
+        //padding-left: 1.5rem;
+        @include Font($rajdhani, 500, 16px, #111);
+
+        //border: 2px solid $secondary_clr;
+        &:focus {
+            border-color: none !important;
+            border: none;
+            outline: none;
+        }
+    }
+
+    .form_create_btn_wrapper {
+        margin: 1.4rem auto;
+        width: 100%;
+        @include Displayed(center, row);
+
+        .create-btn {
+            @include Button(10px 35px, $primary_clr);
+            @include Font($robotoCD, 200, 15px, $bg_clr);
+            margin-top: 1.75rem;
+            box-shadow: $bx-sh;
+        }
+    }
+}
+
+/*--- END STYLING HEADER ---*/

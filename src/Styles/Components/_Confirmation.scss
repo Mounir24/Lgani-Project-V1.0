@@ -1,0 +1,74 @@
+/*--- SCSS FUNCTIONs ---*/
+// DISPLAYED
+@mixin Displayed($pos, $dir) {
+    display: flex;
+    justify-content: $pos;
+    align-items: center;
+    flex-direction: $dir;
+}
+
+// BUTTONS
+@mixin Button($padd, $bg) {
+    padding: $padd;
+    outline: none;
+    border: none;
+    background: $bg;
+    border-radius: 24px;
+}
+
+// FONTS
+@mixin Font($fnt, $wgt, $sz, $clr) {
+    font-family: $fnt;
+    font-weight: $wgt;
+    font-size: $sz;
+    color: $clr;
+    text-transform: uppercase;
+}
+
+.confirmation_main {
+    width: 100%;
+    min-height: 75vh;
+    margin-top: 5.5rem;
+
+    .confirmation_block {
+        width: 65%;
+        height: auto;
+        margin: 1.5rem;
+        padding: 1.5rem;
+        @include Displayed(center, column);
+
+        .confirm_icon_wrapper {
+            width: 5.5rem;
+            height: 5.5rem;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+
+        .confirmation_label {
+            @include Font($robotoCD, 200, 35px, $bg_clr);
+            font-weight: bold !important;
+            margin-top: 1rem;
+        }
+
+        p {
+            @include Font($robotoCD, 200, 17px, $bg_clr);
+            text-transform: capitalize !important;
+            margin-top: 0.5rem;
+        }
+
+        .confirmation_btn {
+            @include Button(10px 45px, $primary_clr);
+            margin-top: 1.5rem;
+            box-shadow: 0 25px 50px -12px $primary_clr;
+
+            a {
+                @include Font($rajdhani, 500, 18px, $bg_clr);
+                color: $bg_clr !important;
+            }
+        }
+    }
+}

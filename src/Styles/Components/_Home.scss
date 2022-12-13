@@ -1,0 +1,446 @@
+/*--- SCSS FUNCTIONs ---*/
+// DISPLAYED
+@mixin Displayed($pos, $dir) {
+    display: flex;
+    justify-content: $pos;
+    align-items: center;
+    flex-direction: $dir;
+}
+
+// BUTTONS
+@mixin Button($padd, $bg) {
+    padding: $padd;
+    outline: none;
+    border: none;
+    background: $bg;
+    border-radius: 24px;
+}
+
+// FONTS
+@mixin Font($fnt, $wgt, $sz, $clr) {
+    font-family: $fnt;
+    font-weight: $wgt;
+    font-size: $sz !important;
+    color: $clr;
+    text-transform: uppercase;
+}
+
+.l-home-container {
+    width: 100%;
+    min-height: 100vh;
+    //position: relative;
+
+    .hero-section-container {
+        width: 100%;
+        height: 80vh;
+        background: transparent !important;
+        //border-bottom: 1px solid hsl(184, 5%, 40%);
+        @include Displayed(center, row);
+        position: relative;
+        //overflow: hidden;
+
+        .shape-right {
+            position: absolute;
+            bottom: -2.5rem;
+            left: -5.5rem;
+            width: 20.5rem;
+            height: 20.5rem;
+            background: $primary_clr;
+            border-radius: 100%;
+            z-index: -1;
+        }
+
+        .shape-left {
+            position: absolute;
+            bottom: -2.5rem;
+            right: -5.5rem;
+            width: 10.5rem;
+            height: 10.5rem;
+            background: $primary_clr;
+            border-radius: 100%;
+            z-index: -1;
+        }
+
+        &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            //backdrop-filter: blur(20px);
+        }
+
+        .hero-banner-content {
+            width: 65%;
+            height: auto;
+            padding: 7.5rem 3.5rem;
+            margin: auto;
+            text-align: center;
+            z-index: 100;
+
+            .hero-banner-title {
+                @include Font($roboto, 900, 60px, $primary_clr);
+                margin-bottom: 0.75rem;
+            }
+
+            .hero-banner-desc {
+                @include Font($rajdhani, 400, 19px, $bg_clr);
+                text-transform: capitalize !important;
+            }
+
+            .hero-banner-started {
+                @include Button(10px 45px, $primary_clr);
+                @include Font($robotoCD, 200, 17px, $bg_clr !important);
+                //text-transform: capitalize !important;
+                margin-top: 2.5rem;
+                position: relative;
+                overflow: hidden;
+
+                &::after {
+                    content: "";
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(255, 255, 255, 0.50);
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    transition: all 0.3s ease-in-out;
+                }
+
+                &:hover:after {
+                    left: 100%;
+                }
+            }
+        }
+    }
+
+    .home-how-it-works {
+        width: 100%;
+        height: 100vh;
+        margin-top: 4.5rem;
+        background: url(../../Assets/SVG/work-string-svg.png) no-repeat center center;
+
+        .home-setting-row {
+            width: 100%;
+            @include Displayed(center, row);
+            margin: .75rem auto;
+
+            .MuiFormControlLabel-label {
+                @include Font($robotoCD, 200, 17px, $bg_clr);
+                text-transform: capitalize !important;
+            }
+        }
+
+        .step-box-container {
+            width: 100%;
+            height: 100%;
+            padding: 0.75rem;
+            //margin: auto;
+            //text-align: center;
+
+            .step-poster-wrapper {
+                width: 10.5rem;
+                height: 10.5rem;
+                margin: auto;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 100%;
+                }
+            }
+
+            .step-box-content {
+                margin-top: 1.5rem;
+
+                .step-title {
+                    @include Font($montserrat, 500, 21px, $bg_clr);
+                    text-transform: capitalize !important;
+                    margin-bottom: 0.75rem;
+                }
+
+                .step-desc {
+                    @include Font($robotoCD, 200, 16px, hsl(184, 5%, 40%));
+                    text-transform: capitalize !important;
+                }
+            }
+        }
+    }
+
+    .home-about-lgani {
+        width: 100%;
+        height: 100vh;
+        margin-top: 4.5rem;
+
+        .brand_name {
+            color: $primary_clr;
+            position: relative;
+
+            &::after {
+                content: "";
+                width: 100%;
+                height: 3px;
+                margin: auto;
+                border-radius: 24px;
+                background: $primary_clr;
+                position: absolute;
+                bottom: -0.50rem;
+                left: 0;
+            }
+        }
+
+        .box-poster-wrapper {
+            width: 100%;
+            height: 100%;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scale(1.2);
+            }
+        }
+
+        .box-content-wrapper {
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            margin: auto;
+
+            .content-desc {
+                @include Font($robotoCD, 200, 17px, hsl(184, 5%, 40%));
+                text-transform: capitalize !important;
+            }
+        }
+
+        .our-features-box {
+            margin-top: 1.20rem;
+            width: 100%;
+
+            ul {
+                padding-left: 0 !important;
+            }
+
+            .list-item {
+                @include Displayed(flex-start, row);
+
+                .check-mark-holder {
+                    width: 2rem;
+                    height: 2rem;
+                    border-radius: 100%;
+                    margin-right: 0.75rem;
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 100%;
+                    }
+                }
+
+                .feature-label {
+                    @include Font($robotoCD, 200, 17px, $bg_clr);
+                    text-transform: capitalize !important;
+                }
+            }
+        }
+    }
+
+    .home-banner-container {
+        width: 100%;
+        height: 55vh;
+        background: $primary_clr;
+        @include Displayed(center, row);
+
+        .banner-content {
+            width: 60%;
+            height: auto;
+            padding: 0 0.9rem;
+            margin: auto;
+
+
+            .banner-label {
+                @include Font($roboto, 900, 55px, $bg_clr);
+                margin-bottom: 0.75rem;
+            }
+
+            .list-item {
+                @include Displayed(flex-start, row);
+                @include Font($robotoCD, 200, 17px, $bg_clr);
+                text-transform: capitalize !important;
+                margin-bottom: .75rem;
+
+                .bx-edit,
+                .bx-mobile-alt,
+                .bx-time-five {
+                    font-size: 22px;
+                    color: $bg_clr;
+                    margin-right: 0.50rem;
+                }
+            }
+
+            .banner-footer-wrapper {
+                margin-top: 1rem;
+                width: 100%;
+                @include Displayed(flex-start, row);
+
+                .btn-get-started {
+                    @include Button(10px 35px, $bg_clr);
+                    @include Font($robotoCD, 200, 17px, $primary_clr);
+                    margin-right: 1.2rem;
+                }
+
+                .btn-extension-label {
+                    @include Font($shadows, 400, 21px, $bg_clr);
+                }
+            }
+        }
+    }
+
+
+    .home-get-started-section {
+        width: 100%;
+        min-height: 75vh;
+        margin-top: 10.5rem;
+
+        .box-container {
+            width: 100%;
+            height: auto;
+            padding: 0.50rem;
+            border: 1px solid hsl(184, 5%, 40%);
+            border-radius: 24px;
+            margin: auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+
+            &::after {
+                content: '';
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: -100%;
+                background: rgba(255, 255, 255, 0.50);
+                transition: all 0.3s ease-in-out;
+            }
+
+            &:hover:after {
+                left: 100%;
+            }
+
+            .box-icon-wrapper {
+                width: 5.5rem;
+                height: 5.5rem;
+                border-radius: 100%;
+                @include Displayed(center, row);
+                background: $primary_clr;
+                margin: 0.50rem auto;
+
+                .bx-qr-scan,
+                .bx-user-plus,
+                .bx-link {
+                    font-size: 45px;
+                    color: $bg_clr;
+                }
+
+            }
+
+            .box-content-wrapper {
+                margin-top: 0.75rem;
+                padding: 0 1.40rem;
+
+                .box-label {
+                    @include Font($montserrat, 500, 21px, $bg_clr);
+                    text-transform: capitalize !important;
+                    margin-bottom: 0.75rem;
+                }
+
+                .box-desc {
+                    @include Font($robotoCD, 200, 16px, hsl(184, 5%, 40%));
+                    text-transform: capitalize !important;
+                }
+
+                .box-btn {
+                    @include Button(10px 35px, $bg_clr);
+                    @include Font($robotoCD, 200, 17px, $primary_clr);
+                    margin: 1.5rem;
+                }
+            }
+
+        }
+    }
+
+    .home-our-features-section {
+        width: 100%;
+        min-height: 75vh;
+        margin-top: 4.5rem;
+
+        .feature-box-wrapper {
+            width: 100%;
+            height: 100%;
+            padding: 0.75rem;
+            text-align: center;
+            margin: auto;
+
+            .feature-circle-wrapper {
+                width: 6.5rem;
+                height: 6.5rem;
+                border-radius: 100%;
+                //background: #FFBF77;
+                border: 2px solid $primary_clr;
+                @include Displayed(center, row);
+                margin: auto;
+                transition: all 0.3s ease-in-out;
+                cursor: pointer;
+
+                &:hover {
+                    background: $primary_clr;
+                }
+
+                &:hover>.feature-label-count {
+                    color: $bg_clr !important;
+                }
+
+                .feature-label-count {
+                    @include Font($montserrat, 500, 34px, $primary_clr);
+                    text-transform: capitalize !important;
+                    transition: all 0.3s ease-in-out;
+                }
+            }
+
+            .feature-content-wrapper {
+                //padding: 0 0.35rem;
+                margin-top: .75rem;
+
+                .feature-title {
+                    @include Font($montserrat, 500, 21px, $bg_clr);
+                    text-transform: capitalize !important;
+                    margin-bottom: 0.75rem;
+                }
+
+                .feature-desc {
+                    @include Font($robotoCD, 200, 16px, hsl(184, 5%, 40%));
+                    text-transform: capitalize !important;
+                }
+            }
+
+        }
+
+    }
+
+}
+
+.register_modal_container,
+.login_modal_container {
+    width: 100%;
+
+    .register-btn,
+    .login-btn {
+        @include Button(10px 35px, $primary_clr);
+        @include Font($robotoCD, 200, 16px, $bg_clr);
+        margin-top: 1rem;
+    }
+}
