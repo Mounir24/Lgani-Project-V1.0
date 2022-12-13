@@ -28,7 +28,7 @@ function DashboardMain() {
   const [ip, setIp] = useState("");
   const [popupUpdate, setPopupUpdate] = useState(false);
   const [qrTagID, setQrTagID] = useState();
-  const [isGPSEnabled, setIsGPSEnabled] = useState(false);
+ const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [metrics, setMetrics] = useState({});
   const [profiles, setProfiles] = useState([]);

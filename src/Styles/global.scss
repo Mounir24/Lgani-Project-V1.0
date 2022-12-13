@@ -28,6 +28,10 @@
     box-sizing: border-box;
 }
 
+#root {
+    overflow: hidden;
+}
+
 body {
     width: 100%;
     min-height: 100vh;
@@ -189,6 +193,10 @@ header {
     background: transparent;
     border-bottom: 1px solid hsl(184, 5%, 40%);
 
+    @include phone {
+        
+    }
+
     .navbar {
         width: 100% !important;
         height: 100% !important;
@@ -197,6 +205,7 @@ header {
         .logo-wrapper {
             width: 5.3rem;
             height: auto;
+            margin-top: 1rem;
 
             /*img {
                     width: 100%;
@@ -219,9 +228,20 @@ header {
         .header_btns {
             padding: 0rem;
 
+            @include phone {
+                text-align: center;
+                display: flex;
+                width: 100%;
+            }
+
             .btn_list {
                 @include Displayed(center, row);
                 padding-top: 0.9rem;
+
+                @include phone {
+                    text-align: center;
+                    width: 100%;
+                }
 
                 .btn-item {
                     padding-top: 0.5rem;
