@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { AiOutlineMenu } from "react-icons/ai";
+import { MdMenuOpen } from "react-icons/md";
 
 function Dashboard() {
   const [show, setShowList] = useState(true);
@@ -69,7 +69,7 @@ function Dashboard() {
           <div className="col-md-10 col-sm-10 col-10">
             <div className="p-0 m-0">
               <div className="dashboard-main-control-wrapper">
-                <AiOutlineMenu
+                <MdMenuOpen
                   className="menu-icon"
                   onClick={() => setShowList(!show)}
                 />
