@@ -225,13 +225,7 @@ function CreateIDTag() {
                       options={options}
                       style={{ borderRadius: "10px !important" }}
                     />
-                    <div className="hint-alert-wrap">
-                      <Alert severity="info">
-                        <AlertTitle>Note</AlertTitle>
-                        for each product has the same price , the standard price
-                        = $24.99 (249 Dhs)
-                      </Alert>
-                    </div>
+
                     {/*---<button className="form-shop-btn-redirect">
                       <i class="bx bx-shopping-bag"></i> Shop Now
                         </button>---*/}
@@ -357,6 +351,13 @@ function CreateIDTag() {
                 ) : null}
                 <div className="form_create_btn_wrapper">
                   <button className="create-btn">Create Now</button>
+                </div>
+                <div className="hint-alert-wrap">
+                  <Alert severity="info">
+                    <AlertTitle>Note</AlertTitle>
+                    for each product has the same price , the standard price =
+                    $24.99 (249 Dhs)
+                  </Alert>
                 </div>
               </form>
             </div>

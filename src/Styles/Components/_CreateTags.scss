@@ -29,6 +29,22 @@
     width: 100%;
     min-height: 100vh;
 
+     .row {
+        @include phone {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+    .col-md-7 {
+        width: 100%;
+    }
+    .col-md-5 {
+        width: 100%;
+    }
+
+    }
+
     .dash_section_label {
         @include Font($montserrat, 500, 30px, $titles_clr);
         //margin-bottom: 1.5rem;
@@ -84,6 +100,12 @@
 
             .hint-alert-wrap {
                 margin-top: 1rem;
+
+                @include phone {
+                    margin-top: 12rem;
+                    margin-left: -2.4rem;
+                    width: 200%;
+                }
             }
 
             .form-shop-btn-redirect {
@@ -92,6 +114,7 @@
                 @include Displayed(flex-start, row);
                 margin-top: 1.75rem;
                 box-shadow: $bx-sh;
+
 
                 .bx-shopping-bag {
                     font-size: 26px;
@@ -201,6 +224,10 @@
                     @include Font($robotoCD, 200, 15px, $bg_clr);
                     margin-top: 1.75rem;
                     box-shadow: $bx-sh;
+
+                    @include phone {
+                        text-align: center;
+                    }
                 }
             }
         }

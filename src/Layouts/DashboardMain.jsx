@@ -28,7 +28,7 @@ function DashboardMain() {
   const [ip, setIp] = useState("");
   const [popupUpdate, setPopupUpdate] = useState(false);
   const [qrTagID, setQrTagID] = useState();
- const [isGPSEnabled, setIsGPSEnabled] = useState(false);
+  const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [metrics, setMetrics] = useState({});
   const [profiles, setProfiles] = useState([]);
@@ -89,7 +89,7 @@ function DashboardMain() {
               default:
                 return null;
             }
-          },
+          }
         );
       } catch (err) {
         alert(err);
@@ -238,7 +238,7 @@ function DashboardMain() {
               setAlertShow(false);
               setAlertContext("Profile Tag Update Operation Failed:(");
             }
-          },
+          }
         );
       } catch (err) {
         alert(err);
@@ -254,7 +254,7 @@ function DashboardMain() {
     try {
       await axios
         .get(
-          `${process.env.REACT_APP_IP_API_URL}api/${ip}?access_key=${process.env.REACT_APP_IP_KEY}`,
+          `${process.env.REACT_APP_IP_API_URL}api/${ip}?access_key=${process.env.REACT_APP_IP_KEY}`
         )
         .then(({ data }) => {
           console.log(data);

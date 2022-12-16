@@ -1,3 +1,5 @@
+@import 'media-queries';
+
 /*--- SCSS FUNCTIONs ---*/
 // DISPLAYED
 @mixin Displayed($pos, $dir) {
@@ -31,22 +33,53 @@
     padding: 0 !important;
     margin: 0 !important;
 
+    .col-md-2 {
+
+       
+        @include phone {
+            // background-color: #0ff;
+            // display:  none;
+            width: 50px;
+        }
+
+        @include tablet {
+            display: flex;
+        }
+
+        @include tablet {
+            display: flex;
+        }
+       
+    }
+
     .dash-sidebar-wrapper {
         width: 100%;
         height: 100%;
         padding: 0;
         margin: 0;
 
+        @include phone {
+          margin-left: -3.5rem;
+        }
+
         .sidebar-menu-list {
             width: 100%;
             margin-top: 2.5rem;
             //padding: 0 !important;
+
+           
+            
 
             .item-list {
                 margin-bottom: 2.5rem;
                 cursor: pointer;
                 //border-radius: 48px;
                 transition: all 0.1s ease-in-out;
+
+                @include phone {
+                    // background-color: crimson;
+                    color: #000;
+                }
 
                 &:hover {
                     //background: $primary_clr;
@@ -70,19 +103,48 @@
                     //background: $secondary_clr;
                     @include Displayed(flex-start, row);
 
+                    @include phone {
+                        padding: -1rem;
+                    }
+
+
                     .bx-home-alt-2,
                     .bx-message-square-add,
                     .bx-qr-scan,
                     .bx-user-circle,
                     .bx-log-out,
                     .bx-cog {
-                        font-size: 30px;
+                        font-size: 25px;
                         color: $primary_clr;
+
+                        @include phone {
+                            font-size: 15px
+                        }
+
+                        @include tablet {
+                            margin-left: -3rem;
+                            font-size: 18px;
+                        }
+
+                        @include sm-desktop {
+                            margin-left: -3rem;
+                        }
+                      
                     }
+                   
 
                     .menu-link-label {
                         @include Font($robotoCD, 200, 16px, $bg_clr);
                         margin-left: .90rem;
+
+                        @include phone {
+                            font-size: 5px !important;
+                            margin-left: 2px;
+                        }
+
+                        @include tablet {
+                            font-size: 8px !important;
+                        }
                     }
                 }
             }
@@ -94,6 +156,23 @@
         min-height: 100vh;
         background: #FFF;
         padding: 1.75rem;
+
+        @include phone {
+            // background-color: #0ff;
+            width: 130%;
+        }
+
+        .menu-icon {
+            display: none;
+
+            @include phone {
+                margin-top: -1.5rem;
+                margin-left: -1.5rem;
+                width: 30px;
+                height: 20px;
+                display: flex;
+            }
+        }
 
         // MAIN DASHBOARD STYLING 
         .dashboard-containter {
