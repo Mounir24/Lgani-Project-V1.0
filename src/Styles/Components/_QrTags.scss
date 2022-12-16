@@ -58,6 +58,8 @@
         padding: 0.75rem;
         margin-bottom: .5rem;
 
+        
+
         .dash_form_label {
             @include Font($montserrat, 200, 16px, $titles_clr);
             text-transform: capitalize !important;
@@ -66,7 +68,9 @@
         .qrtags_filter_inputs {
             width: 100%;
             //padding: 0.75rem;
-
+            @include phone {
+                width: 130%;
+            }
             input[type="text"],
             input[type="number"],
             select {
