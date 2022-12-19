@@ -1,3 +1,5 @@
+@import 'media-queries';
+
 /*--- SCSS FUNCTIONs ---*/
 // DISPLAYED
 @mixin Displayed($pos, $dir) {
@@ -28,6 +30,29 @@
 .dash_profile_container {
     width: 100%;
     min-height: 100vh;
+
+
+    .row {
+
+        @include phone {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        @include tablet {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .col-md-7 {
+
+            @include phone {
+                width: 100%;
+            }
+
+        }
+    }
+    
 
     .dash_section_label {
         @include Font($montserrat, 500, 30px, $titles_clr);
@@ -106,6 +131,10 @@
         height: 100%;
         padding: 0;
         margin: 0;
+
+        @include phone {
+            width: 210%;
+        }
 
         .profile_info_display_wrapper {
             width: 100%;

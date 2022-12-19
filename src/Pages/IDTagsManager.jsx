@@ -258,6 +258,27 @@ function IDTagsManager() {
       },
     },
     {
+      field: "profile_visits",
+      headerName: "Total Visits",
+      width: 120,
+      renderCell: ({ row }) => {
+        const total_visits = row.profile_visits;
+        return (
+          <div style={{ width: "100%", textAlign: "center", margin: "0 auto" }}>
+            <span
+              style={{
+                fontFamily: "'Rajdhani', sans-serif",
+                fontSize: "16px",
+                padding: "2px 10px",
+              }}
+            >
+              {total_visits}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
       field: "profile_link",
       headerName: "Profile Link",
       width: 120,
@@ -429,9 +450,7 @@ function IDTagsManager() {
                 Block
               </option>
               <option value="remove">Remove</option>
-              <option value="unblock" disabled={!isBlocked}>
-                Unblock
-              </option>
+              <option value="maintenance_mode">Maintenance Mode</option>
             </select>
           </div>
         );
@@ -475,133 +494,114 @@ function IDTagsManager() {
   return (
     <div className="container mt-3">
       <div className="dash_qrtags_container">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <>
-            <h2 className="dash_section_label">Qr ID Tags Manager </h2>
-            <div className="row w-100 mt-4">
-              <div className="col-md-12 col-12 col-sm-12">
-                {/*---- FILTER INPUTS CONTAINER  ----*/}
-                <section className="dash_filter_section">
-                  <span className="dash_form_label">#Filter</span>
-                  <form
-                    className="qrtags_filter_inputs"
-                    onSubmit={handleFilterFormSubmit}
-                  >
-                    <div className="form-row">
-                      <div className="form-group col-md-3 col-3 col-sm-4">
-                        <select
-                          name="status"
-                          onChange={handleFilterFormChange}
-                          value={filter.status}
-                          className="form-select mr-sm-2"
-                        >
-                          <option selected>Filter By Status</option>
-                          <option value="true">Active</option>
-                          <option value="false">Inactive</option>
-                        </select>
-                      </div>
-                      <div className="form-group col-md-3 col-3 col-sm-4">
-                        <select
-                          name="object_type"
-                          onChange={handleFilterFormChange}
-                          value={filter.object_type}
-                          className="form-select mr-sm-2"
-                        >
-                          <option selected>Filter By Object Type </option>
-                          <option value="Humains">Humains</option>
-                          <option value="Pet">Pets</option>
-                        </select>
-                      </div>
-                      <div className="form-group col-md-3 col-sm-3 col-4">
-                        <input
-                          type="text"
-                          className="form-control filter_form_input"
-                          name="full_name"
-                          onChange={handleFilterFormChange}
-                          value={filter.full_name}
-                          placeholder="Filter by Full Name"
-                        ></input>
-                      </div>
-                      <div className="form-group col-md-3 col-sm-3 col-4">
-                        {/*--- FILTER FORM BUTTON ---*/}
-                        <button type="submit" className="filter-form-btn">
-                          Filter
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </section>
-                {/*--- QR TAGS -  CREATE NEW QR ID TAG (PAGE REDIRECTION)  ---*/}
-                <div className="dash_qrtags_btn_wrapper">
-                  <button className="qrtag-btn-create-redirect">
-                    <Link to="/dashboard/create">Create new Tag</Link>
-                  </button>
-                </div>
-
-                {/*--- QR TAGS - TABLE CONTAINER ---*/}
-                <div className="dash_qrtags_table_wrapper">
-                  <div style={{ height: "550px", width: "100%" }}>
-                    <DataGrid
-                      rows={profiles}
-                      columns={columns}
-                      pageSize={5}
-                      rowsPerPageOptions={[5]}
-                      checkboxSelection
-                      getRowId={(row) => row._id}
-                    />
+        <h2 className="dash_section_label">Qr ID Tags Manager </h2>
+        <div className="row w-100 mt-4">
+          <div className="col-md-12 col-12 col-sm-12">
+            {/*---- FILTER INPUTS CONTAINER  ----*/}
+            <section className="dash_filter_section">
+              <span className="dash_form_label">#Filter</span>
+              <form className="qrtags_filter_inputs">
+                <div className="form-row">
+                  <div className="form-group col-md-3 col-3 col-sm-4">
+                    <select name="fl_status" className="form-select mr-sm-2">
+                      <option selected>Filter By Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </div>
+                  <div className="form-group col-md-3 col-3 col-sm-4">
+                    <select name="fl_date" className="form-select mr-sm-2">
+                      <option selected>Filter By date </option>
+                      <option value="desc">Arrange by descending</option>
+                      <option value="asc">Arrange by ascending</option>
+                    </select>
+                  </div>
+                  <div className="form-group col-md-3 col-sm-3 col-4">
+                    <input
+                      type="text"
+                      className="form-control filter_form_input"
+                      name="fl_name"
+                      placeholder="Filter by Name"
+                    ></input>
+                  </div>
+                  <div className="form-group col-md-3 col-3 col-sm-4">
+                    <select name="fl_visits" className="form-select mr-sm-2">
+                      <option selected>Filter By visits</option>
+                      <option value="High">Most Visited</option>
+                      <option value="Low">Low Visited</option>
+                    </select>
                   </div>
                 </div>
+              </form>
+            </section>
+            {/*--- QR TAGS -  CREATE NEW QR ID TAG (PAGE REDIRECTION)  ---*/}
+            <div className="dash_qrtags_btn_wrapper">
+              <button className="qrtag-btn-create-redirect">
+                <Link to="/dashboard/create">Create new Tag</Link>
+              </button>
+            </div>
+
+            {/*--- QR TAGS - TABLE CONTAINER ---*/}
+            <div className="dash_qrtags_table_wrapper">
+              <div style={{ height: "550px", width: "100%" }}>
+                <DataGrid
+                  rows={profiles}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  checkboxSelection
+                  getRowId={(row) => row._id}
+                />
               </div>
             </div>
-          </>
-        )}
-        {/*--- FIXED ALERT BOX ---*/}
-        {isError === false ? (
-          <div className="fixed_alert_box">
-            <Alert
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    setIsError(null);
-                  }}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-              severity="success"
-            >
-              <AlertTitle>Operation Sucsess</AlertTitle>
-              {errorContext}
-            </Alert>
           </div>
-        ) : isError === true ? (
-          <div className="fixed_alert_box">
-            <Alert
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    setIsError(null);
-                  }}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-              severity="error"
-            >
-              <AlertTitle>Operation Failed</AlertTitle>
-              {errorContext}
-            </Alert>
-          </div>
-        ) : null}
+        </div>
       </div>
+
+      {/*--- FIXED ALERT BOX ---*/}
+      {isError === false ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setIsError(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="success"
+          >
+            <AlertTitle>Operation Sucsess</AlertTitle>
+            {errorContext}
+          </Alert>
+        </div>
+      ) : isError === true ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setIsError(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            <AlertTitle>Operation Failed</AlertTitle>
+            {errorContext}
+          </Alert>
+        </div>
+      ) : null}
     </div>
   );
 }

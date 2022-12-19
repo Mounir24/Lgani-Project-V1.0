@@ -285,7 +285,11 @@ function Home() {
                 <div className="step-box-container">
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step1} alt="Lgani - How it works? step 1" />
+                    <img
+                      className="step2"
+                      src={Step1}
+                      alt="Lgani - How it works? step 1"
+                    />
                   </div>
 
                   {/*--STEP BOX CONTENT --*/}
@@ -301,7 +305,7 @@ function Home() {
                 </div>
               </div>
               <div className="col-md-3 col-3 col-sm-12">
-                <div className="step-box-container">
+                <div className="step-box-container" id="swp">
                   {/*--STEP BOX CONTENT --*/}
                   <div className="step-box-content">
                     <h3 className="step-title">If your pet goes missing</h3>
@@ -312,7 +316,11 @@ function Home() {
                   </div>
                   {/*--- POSTER BOX ---*/}
                   <div className="step-poster-wrapper">
-                    <img src={Step2} alt="Lgani - How it works? step 2" />
+                    <img
+                      src={Step2}
+                      alt="Lgani - How it works? step 2"
+                      className="setp2"
+                    />
                   </div>
                 </div>
               </div>
@@ -337,7 +345,7 @@ function Home() {
                 </div>
               </div>
               <div className="col-md-3 col-3 col-sm-12">
-                <div className="step-box-container">
+                <div className="step-box-container" id="swp">
                   {/*--STEP BOX CONTENT --*/}
                   <div className="step-box-content">
                     <h3 className="step-title">Reunited with your pet</h3>
@@ -375,7 +383,7 @@ function Home() {
                 </div>
               </div>
               <div className="col-md-3 col-3 col-sm-12">
-                <div className="step-box-container">
+                <div className="step-box-container" id="swp">
                   {/*--STEP BOX CONTENT --*/}
                   <div className="step-box-content">
                     <h3 className="step-title">
@@ -414,7 +422,7 @@ function Home() {
                 </div>
               </div>
               <div className="col-md-3 col-3 col-sm-12">
-                <div className="step-box-container">
+                <div className="step-box-container" id="swp">
                   {/*--STEP BOX CONTENT --*/}
                   <div className="step-box-content">
                     <h3 className="step-title">
@@ -443,7 +451,7 @@ function Home() {
             Why <span className="brand_name">Ajidq</span> service{" "}
           </h1>
           <div className="row w-100 mt-5">
-            <div className="col-md-6 col-6 col-sm-12">
+            <div className="col-md-6 col-6 col-sm-12" id="ajidq">
               <div className="box-poster-wrapper">
                 <img
                   src={AboutSRV}
@@ -451,7 +459,7 @@ function Home() {
                 />
               </div>
             </div>
-            <div className="col-md-6 col-6 col-sm-12">
+            <div className="col-md-6 col-6 col-sm-12" id="aji">
               <div className="box-content-wrapper">
                 <p className="content-desc">
                   Ajidq ID tag provides much more vital information to the
@@ -608,7 +616,7 @@ function Home() {
       <section className="home-our-features-section">
         <div className="container mt-5">
           <h1 className="section-label mb-5">Our Features</h1>
-          <div className="row w-100 ">
+          <div className="row w-100 " id="feature">
             <div className="col-md-4 col-sm-12 col-4">
               <div className="feature-box-wrapper">
                 <div className="feature-circle-wrapper">

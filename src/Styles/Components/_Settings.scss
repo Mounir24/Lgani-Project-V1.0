@@ -1,3 +1,5 @@
+@import 'media-queries';
+
 /*--- SCSS FUNCTIONs ---*/
 // DISPLAYED
 @mixin Displayed($pos, $dir) {
@@ -28,6 +30,22 @@
 .dash_settings_container {
     width: 100%;
     min-height: 100vh;
+
+    .row {
+        @include phone {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @include tablet {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .col-md-6 {
+            width: 100%;
+        }
+    }
 
     .dash_section_label {
         @include Font($montserrat, 500, 30px, $titles_clr);
@@ -104,6 +122,8 @@
                         @include Button(10px 35px, $primary_clr);
                         @include Font($rajdhani, 500, 16px, $bg_clr);
                         box-shadow: $bx-sh;
+                        margin-bottom: 1rem;
+
                     }
                 }
             }

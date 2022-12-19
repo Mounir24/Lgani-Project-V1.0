@@ -1,3 +1,5 @@
+@import 'media-queries';
+
 /*--- SCSS FUNCTIONs ---*/
 // DISPLAYED
 @mixin Displayed($pos, $dir) {
@@ -39,6 +41,16 @@
         position: relative;
         //overflow: hidden;
 
+        @include phone {
+            bottom: 10vh;
+            width: 100%;
+            height: 90%;
+        }
+
+        @include tablet {
+            width: 100%;
+        }
+
         .shape-right {
             position: absolute;
             bottom: -2.5rem;
@@ -48,6 +60,18 @@
             background: $primary_clr;
             border-radius: 100%;
             z-index: -1;
+
+            @include phone {
+                top: 55vh;
+                width: 23vh;
+                height: 23vh;
+            }
+
+            @include tablet {
+                top: 50vh;
+                width: 23vh;
+                height: 23vh;
+            }
         }
 
         .shape-left {
@@ -59,6 +83,19 @@
             background: $primary_clr;
             border-radius: 100%;
             z-index: -1;
+
+            @include phone {
+                top: 65vh;
+                right: -2rem;
+                width: 12vh;
+                height: 12vh;
+            }
+
+            @include tablet {
+                top: 59vh;
+                width: 19vh;
+                height: 19vh;
+            }
         }
 
         &:before {
@@ -79,14 +116,40 @@
             text-align: center;
             z-index: 100;
 
+            @include phone {
+                width: 100%;
+                height: 50%;
+                margin-bottom: 10rem;
+                font-size: 21px !important;
+            }
+
+            @include tablet {
+                width: 100%;
+                margin-top: 22rem;
+                margin-bottom: 45rem;
+            }
+
             .hero-banner-title {
                 @include Font($roboto, 900, 60px, $primary_clr);
                 margin-bottom: 0.75rem;
+
+                @include phone {
+                    right: 1rem;
+                    font-size: 25px !important;
+                }
+
+                @include tablet {
+                    font-size: 4rem !important;
+                }
             }
 
             .hero-banner-desc {
                 @include Font($rajdhani, 400, 19px, $bg_clr);
                 text-transform: capitalize !important;
+
+                @include phone {
+                    font-size: 15px !important;
+                }
             }
 
             .hero-banner-started {
@@ -96,6 +159,19 @@
                 margin-top: 2.5rem;
                 position: relative;
                 overflow: hidden;
+
+                @include phone {
+                    bottom: 2rem;
+                    text-align: center;
+                    padding: 3%;
+                    width: 50%;
+                }
+
+                @include tablet {
+                    width: 60%;
+                    font-size: 1rem !important;
+                    height: 50px;
+                }
 
                 &::after {
                     content: "";
@@ -130,10 +206,76 @@
         margin-top: 4.5rem;
         background: url(../../Assets/SVG/work-string-svg.png) no-repeat center center;
 
+        @include phone {
+            margin-top: 9vh;
+            padding: 1rem;
+            background: none;
+        }
+
+        @include tablet {
+            background: none;
+        }
+
+        @include sm-desktop {
+            background: none;
+        }
+
+        .section-label {
+
+            @include phone {
+                position: floor($number: 3);
+                font-size: 29px !important;
+            }
+        }
+
+        .row {
+
+            @include phone {
+                margin-top: 100vh;
+            }
+
+            #swp {
+
+                @include tablet {
+                    display: flex;
+                    flex-direction: column-reverse;
+                }
+
+                @include phone {
+                    display: flex;
+                    flex-direction: column-reverse;
+                }
+            }
+
+            .col-md-3 {
+
+                @include phone {
+                    width: 100%;
+                    display: flex;
+                    margin: auto;
+                    position: relative;
+                    padding: 1rem;
+                }
+
+                @include tablet {
+                    width: 100%;
+                    margin: auto;
+                    text-align: center;
+                    padding: 1.5rem;
+                }
+
+            }
+        }
+
         .home-setting-row {
             width: 100%;
             @include Displayed(center, row);
             margin: .75rem auto;
+
+            @include phone {
+                top: -5rem;
+            }
+
 
             .MuiFormControlLabel-label {
                 @include Font($robotoCD, 200, 17px, $bg_clr);
@@ -148,10 +290,18 @@
             //margin: auto;
             //text-align: center;
 
+            @include phone {
+                width: 100%;
+            }
+
             .step-poster-wrapper {
                 width: 10.5rem;
                 height: 10.5rem;
                 margin: auto;
+
+                .step2 {
+                    @include tablet {}
+                }
 
                 img {
                     width: 100%;
@@ -183,6 +333,79 @@
         height: 100vh;
         margin-top: 4.5rem;
 
+        @include phone {
+            margin-top: 87rem;
+            width: 100%;
+        }
+
+        // @include tablet {
+        //     background-color: #0ff;
+        //     margin-right: 3rem;
+        // }
+
+        .row {
+            @include sm-desktop {
+                display: flex;
+                width: 145% !important;
+            }
+        }
+
+        #ajidq {
+
+            @include sm-desktop {
+                margin-left: -6rem;
+                width: 47% !important;
+                height: 47%;
+            }
+        }
+
+        #aji {
+            @include sm-desktop {
+                font-size: 9px;
+                width: 43% !important;
+                margin-left: -2rem;
+                padding-right: 2rem;
+            }
+        }
+
+        .col-md-6 {
+
+            @include tablet {
+                margin: auto;
+            }
+        }
+
+        @include tablet {
+            margin-top: 35rem;
+        }
+
+        .container {
+            //     @include phone {
+            //         background-color: crimson;
+            //         text-align: center;
+            //         font-size: 10px !important;
+            //         position: absolute;
+            //     }
+
+            .row {
+
+                @include phone {
+                    width: 100% !important;
+                    display: block;
+                }
+
+                @include tablet {
+                    width: 100%;
+                    display: block;
+                }
+            }
+        }
+
+        .section-label {
+            font-size: 22px !important;
+            text-align: center;
+        }
+
         .brand_name {
             color: $primary_clr;
             position: relative;
@@ -200,18 +423,6 @@
             }
         }
 
-        .box-poster-wrapper {
-            width: 100%;
-            height: 100%;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transform: scale(1.2);
-            }
-        }
-
         .box-content-wrapper {
             width: 100%;
             height: 100%;
@@ -221,6 +432,23 @@
             .content-desc {
                 @include Font($robotoCD, 200, 17px, hsl(184, 5%, 40%));
                 text-transform: capitalize !important;
+
+                @include phone {
+                    text-align: center;
+                    width: 220% !important;
+                    margin-left: 10%;
+                    font-size: 17px !important;
+
+                }
+
+                @include tablet {
+                    text-align: center !important;
+                    font-size: 20px !important;
+                    width: 120%;
+                    margin-bottom: 3rem;
+                    margin-top: 2rem;
+                }
+
             }
         }
 
@@ -228,8 +456,23 @@
             margin-top: 1.20rem;
             width: 100%;
 
+            @include phone {
+                width: 200%;
+                margin-left: 20%;
+                padding: 5%;
+            }
+
+            @include tablet {
+                width: 220%;
+                margin: auto;
+            }
+
             ul {
                 padding-left: 0 !important;
+
+                @include tablet {
+                    padding: 2rem;
+                }
             }
 
             .list-item {
@@ -260,8 +503,22 @@
     .home-banner-container {
         width: 100%;
         height: 55vh;
+        margin-top: -35rem;
         background: $primary_clr;
         @include Displayed(center, row);
+
+        @include phone {
+            margin-top: 35rem;
+            height: 110%;
+        }
+
+        @include tablet {
+            margin: auto;
+        }
+
+        // @include sm-desktop {
+        //     //height: 20vh;
+        // }
 
         .banner-content {
             width: 60%;
@@ -273,6 +530,10 @@
             .banner-label {
                 @include Font($roboto, 900, 55px, $bg_clr);
                 margin-bottom: 0.75rem;
+
+                @include phone {
+                    margin-left: -3rem;
+                }
             }
 
             .list-item {
@@ -299,6 +560,14 @@
                     @include Button(10px 35px, $bg_clr);
                     @include Font($robotoCD, 200, 17px, $primary_clr);
                     margin-right: 1.2rem;
+
+                    @include phone {
+                        width: 100%;
+                        padding: 10px;
+                        font-size: 12px !important;
+                        text-align: center;
+                        position: relative;
+                    }
                 }
 
                 .btn-extension-label {
@@ -313,6 +582,32 @@
         width: 100%;
         min-height: 75vh;
         margin-top: 10.5rem;
+
+        .container {
+            @include phone {
+                padding-top: 16rem;
+            }
+        }
+
+        .row {
+            @include phone {
+                width: 110% !important;
+                display: block;
+            }
+
+            .col-md-4 {
+                width: 96%;
+                padding: 1%;
+            }
+        }
+
+        .section-label {
+
+            @include phone {
+                padding: 2rem;
+                margin: auto;
+            }
+        }
 
         .box-container {
             width: 100%;
@@ -386,6 +681,20 @@
         width: 100%;
         min-height: 75vh;
         margin-top: 4.5rem;
+
+        .row {
+            @include phone {
+                width: 110% !important;
+                display: block;
+            }
+
+            .col-md-4 {
+                @include phone {
+                    width: 120%;
+
+                }
+            }
+        }
 
         .feature-box-wrapper {
             width: 100%;

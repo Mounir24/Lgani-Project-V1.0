@@ -177,14 +177,6 @@ function Settings() {
                   />
                 </FormGroup>
               </div>
-              <div className="privacy_hint_alert">
-                <Alert severity="info">
-                  <AlertTitle>Info</AlertTitle>
-                  You can control your information privacy , by Enable / Disable
-                  information options , so that you can Show / Hide your
-                  senstive info , from the public
-                </Alert>
-              </div>
             </div>
           </div>
           <div className="col-md-6 col-sm-12 col-6">
@@ -253,6 +245,14 @@ function Settings() {
                     >
                       Save All
                     </button>
+                    <div className="privacy_hint_alert">
+                      <Alert severity="info">
+                        <AlertTitle>Info</AlertTitle>
+                        You can control your information privacy , by Enable /
+                        Disable information options , so that you can Show /
+                        Hide your senstive info , from the public
+                      </Alert>
+                    </div>
                   </div>
                 </form>
               </div>
