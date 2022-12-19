@@ -67,10 +67,8 @@ const UserAuthReducer = (state, action) => {
                 error: action.payload
             }
         case "PROFILE_UPDATE":
-            console.log('TYPE: UPDATE');
-            console.log(action.payload)
             return {
-                user: action.paylaod,
+                user: action.profile,
                 laoding: null,
                 error: null
             }

@@ -28,6 +28,28 @@
 .dash_qrtags_container {
     width: 100%;
     min-height: 100vh;
+    position: relative;
+
+    .loader-animation {
+        width: 100%;
+        height: 100%;
+        @include Displayed(center, row);
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        .loader-anim-wrapper {
+            width: 6.5rem;
+            height: 6.5rem;
+            max-width: 8.5rem;
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+        }
+    }
 
     .dash_section_label {
         @include Font($montserrat, 500, 30px, $titles_clr);
@@ -85,6 +107,14 @@
                     border: none;
                     outline: none;
                 }
+            }
+
+            .filter-form-btn {
+                @include Button(15px 35px, $secondary_clr);
+                margin: 0.25rem 0;
+                @include Font($robotoCD, 200, 16px, $bg_clr);
+                border-radius: 10px !important;
+                box-shadow: 0 25px 50px -18px $secondary_clr;
             }
         }
     }

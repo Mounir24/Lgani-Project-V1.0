@@ -7,7 +7,7 @@ import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // IMPORT ASSETS (IMAGES -  SVG - GIFs)
 // PETS ASSETS
@@ -42,7 +42,7 @@ function Home() {
   const [loginError, setLoginError] = useState("");
   const [isRedirectLoading, setIsRedirectLoading] = useState(false);
 
-  const { signup_open: open, dispatch } = useContext(UserAuthContext);
+  const { signup_open: open, user, dispatch } = useContext(UserAuthContext);
   const { login_open } = useContext(UserAuthContext);
   const navigateTo = useNavigate();
 
@@ -193,7 +193,7 @@ function Home() {
               });
               dispatch({
                 type: "LOGIN_SUCCESS",
-                payload: CLIENT.user_payload,
+                payload: CLIENT.clientProfile,
               });
               setIsRedirectLoading(true);
               setTimeout(() => {
@@ -247,9 +247,15 @@ function Home() {
           <p className="hero-banner-desc">
             Help lost people & pets reunite with their family safer and faster.
           </p>
-          <button type="button" className="hero-banner-started">
-            Get started Now
-          </button>
+          {user && user !== null ? (
+            <Link to="/dashboard/home" className="banner-dash-btn">
+              My Dashboard
+            </Link>
+          ) : (
+            <button type="button" className="hero-banner-started">
+              Get Started
+            </button>
+          )}
         </div>
         <div className="shape-left"></div>
       </div>

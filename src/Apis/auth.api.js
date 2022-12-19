@@ -75,6 +75,32 @@ class AuthAPI {
             return CB(new Error(err.message), null);
         }
     }
+
+    // UPDATE CLIENT PROFILE - API ENDPOINT 
+    static async updateClientProfile(clientProfile, cid, CB) {
+        if (Object.keys(clientProfile).length === 0) {
+            return CB(new Error('Profile State got empty to update :('), null);
+        }
+        // CHECK IF CLIENT_ID EXIST
+        if (!cid || cid === undefined) {
+            return CB(new Error('Client ID expected :('));
+        }
+
+        try {
+            await GlobalAPI.put(`/api/v1/auth/users/profile/${cid}/update`, clientProfile, { withCredentials: true })
+                .then(response => {
+                    if (response.status === 200 && response.statusText === "OK") {
+                        if (response.data.codeKey === 0) {
+                            return CB(response.data.message, response.data);
+                        } else {
+                            return CB(null, response.data);
+                        }
+                    }
+                })
+        } catch (err) {
+            return CB(new Error(err.message), null);
+        }
+    }
 }
 
 // EXPORTS CLASS 

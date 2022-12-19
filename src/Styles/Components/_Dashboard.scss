@@ -94,6 +94,13 @@
         min-height: 100vh;
         background: #FFF;
         padding: 1.75rem;
+        position: relative;
+
+        .fixed_alert_box {
+            position: fixed;
+            bottom: 4.5rem;
+            left: 4.5rem;
+        }
 
         // MAIN DASHBOARD STYLING 
         .dashboard-containter {
@@ -423,23 +430,19 @@
 
                         .tag-edit-btn,
                         .tag-remove-btn {
-                            width: 2.5rem;
-                            height: 2.5rem;
+                            /*width: 2.5rem;
+                            height: 2.5rem;*/
                             //background:;
-                            @include Button(8px 10px, hsl(184, 5%, 40%));
+                            @include Button(8px 20px, hsl(184, 5%, 40%));
+                            @include Font($robotoCD, 200, 13px, $bg_clr);
                             background: rgba(255, 255, 255, 0.1) !important;
-                            border-radius: 100%;
+                            border-radius: 28px;
                             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
                             backdrop-filter: blur(3.4px);
                             -webkit-backdrop-filter: blur(3.4px);
                             margin-right: 0.50rem;
-
-                            .bx-edit-alt,
-                            .bxs-trash-alt {
-                                font-size: 20px;
-                                color: $bg_clr;
-                            }
                         }
+
                     }
                 }
 

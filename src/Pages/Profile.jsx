@@ -1,8 +1,107 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import { UserAuthContext } from "../Context/UserAuthContext";
+import axios from "axios";
+
+// IMPORT APIs CLASSES
+import AuthAPI from "../Apis/auth.api";
 
 function Profile() {
   // STATE MANAGEMENT
   const [avatar, setAvatar] = useState("");
+  const [profile, setProfile] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(null);
+  const [alertContext, setAlertContext] = useState("");
+  const [allCountries, setAllCountries] = useState([]);
+
+  // GLOBAL STATE MANAGEMENT
+  const { user, dispatch } = useContext(UserAuthContext);
+
+  useEffect(() => {
+    // SET PAGE TITLE
+    document.title = `Ajidq || ${user.full_name}'s profile`;
+    // HTTP CALL - COUNTRIES REST API ENDPOINT
+    const getCountries = async () => {
+      const API_ENDPOINT = "https://restcountries.com/v3.1/all";
+      try {
+        await axios.get(API_ENDPOINT).then((response) => {
+          if (response.status === 200 && response.statusText === "OK") {
+            response.data.map((country) => {
+              const name = country["name"].common;
+              if (allCountries.includes(name)) {
+                const itemIndex = allCountries.indexOf(name);
+                // REMOVE MULTIPLE VALUES
+                allCountries.splice(itemIndex, 1);
+              } else {
+                setAllCountries((prev) => [...prev, name]);
+              }
+
+              return true;
+            });
+          } else {
+            setIsError(false);
+            setAlertContext("Countries API failed to operate :(");
+          }
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getCountries();
+  }, [allCountries]);
+
+  // HANDLE PROFILE CHANGE  EVENT
+  const handleProfileUpdate = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    // UPDATE PROFILE OBJECT
+    setProfile((values) => ({ ...values, [name]: value }));
+  };
+
+  // HANDLE PROFILE PROFILE SUBMIT (UPDATE) EVENT
+  const updateProfileForm = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    try {
+      await AuthAPI.updateClientProfile(profile, user._id, (err, CLIENT) => {
+        if (err) {
+          alert(err.message);
+          console.log(err);
+          setIsError(false);
+          setAlertContext(err.message);
+          return;
+        }
+
+        switch (CLIENT.codeKey) {
+          case 0:
+            setIsError(true);
+            setAlertContext(CLIENT.message);
+            break;
+          case 1:
+            //UPDATE CLIENT GLOBAL STATE MANAGEMENT
+            console.log(CLIENT);
+            dispatch({ type: "PROFILE_UPDATE", profile: CLIENT.payload });
+            // SET AN ALERT
+            setIsError(true);
+            setAlertContext("Profile successfully updated");
+            break;
+          default:
+            break;
+        }
+      });
+    } catch (err) {
+      setIsError(false);
+      setAlertContext(err.message);
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // CONVERT FILE IMAGE TO BASE64
   const toBase64 = (FILE) => {
@@ -38,6 +137,7 @@ function Profile() {
 
     toBase64(FILE).then((AVATAR) => {
       setAvatar(AVATAR);
+      setProfile((values) => ({ ...values, profile_avatar: AVATAR }));
     });
   };
 
@@ -56,7 +156,9 @@ function Profile() {
                     <input
                       type="text"
                       className="form-control profile_form_input"
-                      name="f_name"
+                      name="first_name"
+                      onChange={handleProfileUpdate}
+                      value={profile.first_name || user.first_name}
                       placeholder="Enter your first name"
                     ></input>
                   </div>
@@ -64,7 +166,9 @@ function Profile() {
                     <input
                       type="text"
                       className="form-control profile_form_input"
-                      name="l_name"
+                      name="last_name"
+                      onChange={handleProfileUpdate}
+                      value={profile.last_name || user.last_name}
                       placeholder="Enter your last name"
                     ></input>
                   </div>
@@ -75,11 +179,18 @@ function Profile() {
                       type="text"
                       className="form-control profile_form_input"
                       name="primary_phone"
+                      onChange={handleProfileUpdate}
+                      value={profile.primary_phone || user.phone.primary}
                       placeholder="Enter your phone"
                     ></input>
                   </div>
                   <div className="form-group col-md-6 col-6 col-sm-6">
-                    <select name="gender" className="form-select mr-sm-2">
+                    <select
+                      name="gender"
+                      onChange={handleProfileUpdate}
+                      value={profile.gender || user.gender}
+                      className="form-select mr-sm-2"
+                    >
                       <option selected>Select Gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -92,6 +203,10 @@ function Profile() {
                       type="text"
                       className="form-control profile_form_input"
                       name="email"
+                      onChange={handleProfileUpdate}
+                      value={profile.email || user.email}
+                      style={{ cursor: "not-allowed" }}
+                      disabled
                       placeholder="Enter your e-mail address"
                     ></input>
                   </div>
@@ -104,50 +219,75 @@ function Profile() {
                     <input
                       type="text"
                       className="form-control profile_form_input"
-                      name="address_line"
+                      name="local_address"
+                      onChange={handleProfileUpdate}
+                      value={
+                        profile.local_address || user.geo_location.local_address
+                      }
                       placeholder="Enter your address / location"
                     ></input>
                   </div>
                   <div className="form-group col-md-4 col-4 col-sm-12">
-                    <select name="country" className="form-select mr-sm-2">
-                      <option selected>Country</option>
-                      <option value="Morocco">Morocco</option>
-                      <option value="U.S.A">U.S.A</option>
+                    <select
+                      name="country"
+                      onChange={handleProfileUpdate}
+                      value={profile.country || user.geo_location.country}
+                      className="form-select mr-sm-2"
+                    >
+                      <option selected>Select Country</option>
+                      {allCountries.sort().map((country, index) => {
+                        return (
+                          <>
+                            <option key={index} value={country}>
+                              {country}
+                            </option>
+                          </>
+                        );
+                      })}
                     </select>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-4 col-sm-12 col-4">
-                    <select name="city" className="form-select mr-sm-2">
-                      <option selected>City</option>
-                      <option value="Agadir">Agadir</option>
-                      <option value="Casa Blanca">Casa Blanca</option>
-                      <option value="Chefchaoun">Chefchaoun</option>
-                    </select>
+                    <input
+                      type="text"
+                      className="form-control profile_form_input"
+                      name="city"
+                      onChange={handleProfileUpdate}
+                      value={profile.city || user.geo_location.city}
+                      placeholder="Enter your city"
+                    ></input>
                   </div>
                   <div className="form-group col-md-4 col-sm-12 col-4">
-                    <select
-                      name="state_province"
-                      className="form-select mr-sm-2"
-                    >
-                      <option selected>State / Province</option>
-                      <option value="Sous-massa">Sous-massa</option>
-                      <option value="Tafilalt">Tafilalt</option>
-                      <option value="Houceima">Houceima</option>
-                    </select>
+                    <input
+                      type="text"
+                      className="form-control profile_form_input"
+                      name="state"
+                      onChange={handleProfileUpdate}
+                      value={profile.state || user.geo_location.state}
+                      placeholder="State / Province"
+                    ></input>
                   </div>
                   <div className="form-group col-md-4 col-sm-12 col-4">
                     <input
                       type="text"
                       className="form-control profile_form_input"
                       name="zip_code"
+                      onChange={handleProfileUpdate}
+                      value={profile.zip_code || user.geo_location.zip_code}
                       placeholder="Zip Code"
                     ></input>
                   </div>
                 </div>
               </form>
               <div className="form_dash_btn_wrapper">
-                <button className="dash_profile-save-btn">Save All</button>
+                <button
+                  onClick={updateProfileForm}
+                  type="button"
+                  className="dash_profile-save-btn"
+                >
+                  {isLoading ? "Saving..." : "Save"}
+                </button>
               </div>
             </div>
           </div>
@@ -157,18 +297,14 @@ function Profile() {
               <div className="profile_info_display_wrapper">
                 <div className="client_profile_avtr_wrapper">
                   <img
-                    src={
-                      avatar
-                        ? avatar
-                        : "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04"
-                    }
+                    src={avatar ? avatar : user.profile_avatar}
                     alt="Client Profile"
                   />
                 </div>
                 <div className="client_profile_content_box">
-                  <h4 className="profile_client_fname">Mounir el bertouli</h4>
+                  <h4 className="profile_client_fname">{user.full_name}</h4>
                   <span className="profile_client_country">
-                    Morocco, Agadir (MA)
+                    {user.geo_location.country} / {user.geo_location.city}
                   </span>
                 </div>
                 {/*--- FILE PROFILE UPLAOD INPUT  ---*/}
@@ -191,6 +327,50 @@ function Profile() {
           </div>
         </div>
       </div>
+      {/*--- FIXED ALERT BOX ---*/}
+      {isError ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setIsError(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="success"
+          >
+            <AlertTitle>Operation Sucsess</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : isError === false ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setIsError(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            <AlertTitle>Operation Failed</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : null}
     </div>
   );
 }

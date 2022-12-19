@@ -28,6 +28,13 @@
 .dash_tags_creation_container {
     width: 100%;
     min-height: 100vh;
+    position: relative;
+
+    .fixed_alert_box {
+        position: fixed;
+        bottom: 4.5rem;
+        left: 4.5rem;
+    }
 
     .dash_section_label {
         @include Font($montserrat, 500, 30px, $titles_clr);
@@ -52,6 +59,19 @@
         height: 100%;
         padding: 0;
         margin: 0;
+
+        .form_create_btn_wrapper {
+            margin: 1.4rem auto;
+            width: 100%;
+            @include Displayed(center, row);
+
+            .create-btn {
+                @include Button(10px 35px, $primary_clr);
+                @include Font($robotoCD, 200, 15px, $bg_clr);
+                margin-top: 1.75rem;
+                box-shadow: $bx-sh;
+            }
+        }
 
         .owner_info_form {
             width: 100%;

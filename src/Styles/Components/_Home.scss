@@ -112,6 +112,15 @@
                     left: 100%;
                 }
             }
+
+            .banner-dash-btn {
+                @include Button(10px 45px, $bg_clr);
+                @include Font($robotoCD, 200, 17px, $primary_clr !important);
+                //text-transform: capitalize !important;
+                margin-top: 2.5rem;
+                position: relative;
+                overflow: hidden;
+            }
         }
     }
 

@@ -5,10 +5,13 @@ import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import axios from "axios";
-import Select from "react-select";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 // IMPORT ASSETS
 import HumainAvatar from "../Assets/SVG/user-avatar.png";
+// IMPORT APIs CLASSES
+import ProfilesTagsAPI from "../Apis/tags.api";
 //import PetsAvatar from "../Assets/SVG/pets-avatar.png";
 
 function CreateIDTag() {
@@ -16,6 +19,15 @@ function CreateIDTag() {
   const [isGPSEnabled, setIsGPSEnabled] = useState(false);
   const [avatar, setAvatar] = useState("");
   const [allCountries, setAllCountries] = useState([]);
+  const [newProfile, setNewProfile] = useState({});
+  const [error, setError] = useState({});
+  const [isSafe, setIsSafe] = useState(false);
+  const [alertShow, setAlertShow] = useState(null);
+  const [alertContext, setAlertContext] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // GLOBAL CONTEXT API
+  //const { user } = useContext(UserAuthContext);
 
   // HANDLE SIGNUP PASSWORD SWITCH INPUT
   const handleSignupSwitch = (event) => {
@@ -90,18 +102,168 @@ function CreateIDTag() {
 
     toBase64(FILE).then((AVATAR) => {
       setAvatar(AVATAR);
+      setNewProfile((values) => ({ ...values, profile_avatar: AVATAR }));
     });
   };
 
-  const options = [
-    { value: "Braclets", label: "Braclets (humains)" },
-    { value: "Necklace", label: "Necklace (Pets)" },
-  ];
+  // HANDLE FORM INPUT CHANGE EVENT
+  const handleFormInputChange = (event) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setNewProfile((values) => ({ ...values, [name]: value }));
+    validationInput(event);
+  };
+
+  const validationInput = (event) => {
+    const { name, value } = event.target;
+    setError((prev) => {
+      const stateObj = { ...prev, [name]: "" };
+
+      switch (name) {
+        case "first_name":
+          if (!value) {
+            stateObj[name] = "First name  fieldrequired !";
+          }
+          break;
+        case "last_name":
+          if (!value) {
+            stateObj[name] = "Last name field required !";
+          }
+          break;
+        case "country":
+          if (!value || value === "Select Country") {
+            stateObj[name] = "Country field required !";
+          }
+          break;
+        case "city":
+          if (!value) {
+            stateObj[name] = "City field required !";
+          }
+          break;
+        case "local_address":
+          if (!value) {
+            stateObj[name] = "Address field required !";
+          }
+          break;
+        case "zip_code":
+          if (!value) {
+            stateObj[name] = "Zip code field required !";
+          }
+          break;
+        case "state":
+          if (!value) {
+            stateObj[name] = "State field required !";
+          }
+          break;
+        case "primary_phone":
+          if (!value) {
+            stateObj[name] = "Primary phone field required !";
+          }
+          break;
+        case "secondary_phone":
+          if (!value) {
+            stateObj[name] = "Secondary phone field required !";
+          }
+          break;
+        case "email":
+          if (!value) {
+            stateObj[name] = "Email Address field required !";
+          }
+          break;
+        case "tag_product":
+          if (!value || value === "Select ID Tag Product") {
+            stateObj[name] = "Tag Product field required !";
+          }
+          break;
+        case "loster_fname":
+          if (!value) {
+            stateObj[name] = "first name field required !";
+          }
+          break;
+        case "loster_lname":
+          if (!value) {
+            stateObj[name] = "last name field required !";
+          }
+          break;
+
+        case "loster_gender":
+          if (!value || value === "Select gender") {
+            stateObj[name] = "Gender field required !";
+          }
+          break;
+        case "loster_color":
+          if (!value) {
+            stateObj[name] = "Color field required !";
+          }
+          break;
+        case "loster_age":
+          if (!value) {
+            stateObj[name] = "Age field required !";
+          }
+          break;
+        case "loster_object_type":
+          if (!value || value === "Select Object Type") {
+            stateObj[name] = "Object Type field required !";
+          }
+          break;
+
+        default:
+          break;
+      }
+      if (!value && value === "") {
+        setIsSafe(false);
+      } else {
+        setIsSafe(true);
+      }
+      //isInputValidationSafe();
+      return stateObj;
+    });
+  };
+
+  // HANDLE FORM SUBMMIT EVENT
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    setIsLoading(true);
+    // CHECK IF PROFILE OBJECT HAS VALID PROPERTIES
+    if (newProfile && Object.keys(newProfile).length > 0) {
+      try {
+        await ProfilesTagsAPI.createNewProfileTag(
+          newProfile,
+          (err, PROFILE) => {
+            if (err) {
+              setAlertShow(false);
+              setAlertContext(err);
+              setIsLoading(false);
+              return;
+            }
+
+            if (PROFILE.codeKey === 1) {
+              // ALERT SUCCESS MESSAGE
+              setAlertShow(true);
+              setAlertContext(PROFILE.message);
+              setIsLoading(false);
+            } else {
+              setAlertShow(false);
+              setAlertContext(PROFILE.message);
+              setIsLoading(false);
+            }
+          },
+        );
+      } catch (err) {
+        setAlertShow(false);
+        setAlertContext(err);
+        setIsLoading(false);
+      }
+    } else {
+      setAlertShow(false);
+      setAlertContext("Profile payload got empty !");
+    }
+  };
 
   return (
     <div className="container mt-3">
       <div className="dash_tags_creation_container">
-        <h2 className="dash_section_label">New ID Tag Qr Code</h2>
+        <h2 className="dash_section_label">New ID Tag Profile</h2>
         <div className="row mt-4 w-100">
           <div className="col-md-7 col-7 col-sm-12">
             <div className="dash_left_panel_form">
@@ -114,23 +276,55 @@ function CreateIDTag() {
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="f_name"
+                      className={`form-control owner_form_input ${
+                        error.first_name ? "is-invalid" : ""
+                      }`}
+                      name="first_name"
+                      onChange={handleFormInputChange}
+                      value={newProfile.first_name}
                       placeholder="First Name"
+                      onBlur={validationInput}
+                      aria-describedby="field1"
                     ></input>
+                    {error.first_name && (
+                      <div id="field1" className="invalid-feedback">
+                        {error.first_name}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="l_name"
+                      className={`form-control owner_form_input ${
+                        error.last_name ? "is-invalid" : ""
+                      }`}
+                      name="last_name"
+                      onChange={handleFormInputChange}
+                      value={newProfile.last_name}
                       placeholder="Last Name"
+                      onBlur={validationInput}
+                      aria-describedby="field2"
                     ></input>
+                    {error.last_name && (
+                      <div id="field2" className="invalid-feedback">
+                        {error.last_name}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6 col-6 col-sm-6">
-                    <select name="country" className="form-select mr-sm-2">
+                    <select
+                      name="country"
+                      onChange={handleFormInputChange}
+                      className={`form-select  mr-sm-2 ${
+                        error.country ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field3"
+                    >
                       <option selected>Select Country</option>
                       {allCountries.sort().map((country, index) => {
                         return (
@@ -142,42 +336,96 @@ function CreateIDTag() {
                         );
                       })}
                     </select>
+                    {error.country && (
+                      <div id="field3" className="invalid-feedback">
+                        {error.country}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6 col-6 col-sm-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
+                      className={`form-control owner_form_input ${
+                        error.city ? "is-invalid" : ""
+                      }`}
                       name="city"
+                      onChange={handleFormInputChange}
+                      value={newProfile.city}
                       placeholder="Enter your city"
+                      onBlur={validationInput}
+                      aria-describedby="field4"
                     ></input>
+                    {error.city && (
+                      <div id="field4" className="invalid-feedback">
+                        {error.city}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-12 col-12 col-sm-12">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="owner_address"
+                      className={`form-control owner_form_input ${
+                        error.local_address ? "is-invalid" : ""
+                      }`}
+                      name="local_address"
+                      onChange={handleFormInputChange}
+                      value={newProfile.local_address}
                       placeholder="Enter Your local Address"
+                      onBlur={validationInput}
+                      aria-describedby="field5"
                     ></input>
+                    {error.local_address && (
+                      <div id="field5" className="invalid-feedback">
+                        {error.local_address}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-sm-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
+                      className={`form-control owner_form_input ${
+                        error.zip_code ? "is-invalid" : ""
+                      }`}
                       name="zip_code"
+                      onChange={handleFormInputChange}
+                      value={newProfile.zip_code}
                       placeholder="Zip Code"
+                      onBlur={validationInput}
+                      aria-describedby="field5"
                     ></input>
+                    {error.zip_code && (
+                      <div id="field5" className="invalid-feedback">
+                        {error.zip_code}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-sm-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
+                      className={`form-control owner_form_input ${
+                        error.state ? "is-invalid" : ""
+                      }`}
                       name="state"
+                      onChange={handleFormInputChange}
+                      value={newProfile.state}
                       placeholder="State / Province"
+                      onBlur={validationInput}
+                      aria-describedby="field6"
                     ></input>
+                    {error.state && (
+                      <div id="field6" className="invalid-feedback">
+                        {error.state}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {/*--- OWNER CONTACT AREA  ---*/}
@@ -186,45 +434,91 @@ function CreateIDTag() {
                   <div className="form-group col-md-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="contact_primary_number"
+                      className={`form-control owner_form_input ${
+                        error.primary_phone ? "is-invalid" : ""
+                      }`}
+                      name="primary_phone"
+                      onChange={handleFormInputChange}
+                      value={newProfile.primary_phone}
                       placeholder="Enter Your Primary Number"
+                      onBlur={validationInput}
+                      aria-describedby="field7"
                     ></input>
+                    {error.primary_phone && (
+                      <div id="field7" className="invalid-feedback">
+                        {error.primary_phone}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="contact_second_number"
+                      className={`form-control owner_form_input ${
+                        error.secondary_phone ? "is-invalid" : ""
+                      }`}
+                      name="secondary_phone"
+                      onChange={handleFormInputChange}
+                      value={newProfile.secondary_phone}
                       placeholder="Enter Your Secondary Number"
+                      onBlur={validationInput}
+                      aria-describedby="field8"
                     ></input>
+                    {error.secondary_phone && (
+                      <div id="field8" className="invalid-feedback">
+                        {error.secondary_phone}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-12 col-sm-12 col-12">
                     <input
                       type="text"
-                      className="form-control owner_form_input"
-                      name="contact_email"
-                      placeholder="Enter Your E-mail Address"
+                      className={`form-control owner_form_input ${
+                        error.email ? "is-invalid" : ""
+                      }`}
+                      name="email"
+                      onChange={handleFormInputChange}
+                      value={newProfile.email}
+                      placeholder="Enter Your Email address"
+                      onBlur={validationInput}
+                      aria-describedby="field9"
                     ></input>
+                    {error.email && (
+                      <div id="field9" className="invalid-feedback">
+                        {error.email}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {/*--- QR CODE ID TAG PRODUCTS LIST AREA  ---*/}
                 <span className="dash_form_label">#ID Tags Products</span>
                 <div className="form-row">
                   <div className="form-group col-md-12 col-12 col-sm-12">
-                    {/*---<select name="tag_product" className="form-select mr-sm-2">
-                      <option selected>Select ID Tag Product</option>
-                      <option value="Pets">Pets</option>
-                      <option value="Humains">Humains</option>
-                    </select>---*/}
-                    <Select
+                    <select
+                      onChange={handleFormInputChange}
                       name="tag_product"
-                      className="mr-sm-2"
-                      options={options}
-                      style={{ borderRadius: "10px !important" }}
-                    />
+                      value={newProfile.tag_product}
+                      required
+                      className={`form-select mr-sm-2 ${
+                        error.tag_product ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field10"
+                    >
+                      <option selected>Select ID Tag Product</option>
+                      <option value="Braclets">Braclets (humains)</option>
+                      <option value="Necklace">Necklace (Pets)</option>
+                    </select>
+                    {error.tag_product && (
+                      <div id="field10" className="invalid-feedback">
+                        {error.tag_product}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                     <div className="hint-alert-wrap">
                       <Alert severity="info">
                         <AlertTitle>Note</AlertTitle>
@@ -238,6 +532,20 @@ function CreateIDTag() {
                   </div>
                 </div>
               </form>
+              <div className="form_create_btn_wrapper">
+                <button
+                  className="create-btn"
+                  onClick={handleFormSubmit}
+                  type="button"
+                  style={{
+                    cursor: isSafe ? "pointer" : "not-allowed",
+                    opacity: isSafe ? "1" : "0.4",
+                  }}
+                  disabled={isSafe ? false : true}
+                >
+                  {isLoading ? "Please Wait..." : "Create Now"}
+                </button>
+              </div>
             </div>
           </div>
           <div className="col-md-5 col-5 col-sm-12">
@@ -259,6 +567,7 @@ function CreateIDTag() {
                         id="file"
                         onChange={handleAvatarChange}
                         name="profile_avatar"
+                        required
                         placeholder="Upload Loster Profile Avatar"
                       ></input>
                       <label for="file">
@@ -274,58 +583,131 @@ function CreateIDTag() {
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control loster_form_input"
+                      className={`form-control loster_form_input ${
+                        error.loster_fname ? "is-invalid" : ""
+                      }`}
                       name="loster_fname"
+                      required
+                      onChange={handleFormInputChange}
+                      value={newProfile.loster_fname}
                       placeholder="First Name"
+                      onBlur={validationInput}
+                      aria-describedby="field11"
                     ></input>
+                    {error.loster_fname && (
+                      <div id="field11" className="invalid-feedback">
+                        {error.loster_fname}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control loster_form_input"
+                      className={`form-control loster_form_input ${
+                        error.loster_lname ? "is-invalid" : ""
+                      }`}
                       name="loster_lname"
+                      onChange={handleFormInputChange}
+                      value={newProfile.loster_lname}
                       placeholder="Last Name"
+                      onBlur={validationInput}
+                      aria-describedby="field12"
                     ></input>
+                    {error.loster_lname && (
+                      <div id="field12" className="invalid-feedback">
+                        {error.loster_lname}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <select
                       name="loster_gender"
-                      className="form-select mr-sm-2"
+                      onChange={handleFormInputChange}
+                      className={`form-select mr-sm-2 ${
+                        error.loster_gender ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field13"
                     >
                       <option selected>Select gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                     </select>
+                    {error.loster_gender && (
+                      <div id="field13" className="invalid-feedback">
+                        {error.loster_gender}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="number"
-                      className="form-control loster_form_input"
                       name="loster_age"
+                      onChange={handleFormInputChange}
+                      value={newProfile.loster_age}
                       placeholder="Enter Age"
+                      className={`form-control loster_form_input ${
+                        error.loster_age ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field14"
                     ></input>
+                    {error.loster_age && (
+                      <div id="field14" className="invalid-feedback">
+                        {error.loster_age}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <input
                       type="text"
-                      className="form-control loster_form_input"
                       name="loster_color"
+                      onChange={handleFormInputChange}
+                      value={newProfile.loster_color}
                       placeholder="Body Color"
+                      className={`form-control loster_form_input ${
+                        error.loster_color ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field15"
                     ></input>
+                    {error.loster_color && (
+                      <div id="field15" className="invalid-feedback">
+                        {error.loster_color}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group col-md-6 col-sm-6 col-6">
                     <select
                       name="loster_object_type"
-                      className="form-select mr-sm-2"
+                      onChange={handleFormInputChange}
+                      value={newProfile.loster_object_type}
+                      required
+                      className={`form-select mr-sm-2 ${
+                        error.loster_object_type ? "is-invalid" : ""
+                      }`}
+                      onBlur={validationInput}
+                      aria-describedby="field16"
                     >
                       <option selected>Select Object Type</option>
                       <option value="Pet">Pets</option>
                       <option value="Humain">Humain</option>
                     </select>
+                    {error.loster_object_type && (
+                      <div id="field16" className="invalid-feedback">
+                        {error.loster_object_type}
+                        <i className="bx bxs-error-circle"></i>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {/*--- LOSTER GPS NOTIFICATION AREA  ---*/}
@@ -355,14 +737,55 @@ function CreateIDTag() {
                     </Alert>
                   </div>
                 ) : null}
-                <div className="form_create_btn_wrapper">
-                  <button className="create-btn">Create Now</button>
-                </div>
               </form>
             </div>
           </div>
         </div>
       </div>
+      {/*--- FIXED ALERT BOX ---*/}
+      {alertShow ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setAlertShow(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="success"
+          >
+            <AlertTitle>Operation Sucsess</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : alertShow === false ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setAlertShow(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            <AlertTitle>Operation Failed</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : null}
     </div>
   );
 }

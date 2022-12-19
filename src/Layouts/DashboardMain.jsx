@@ -13,6 +13,8 @@ import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import { UserAuthContext } from "../Context/UserAuthContext";
 
 // ASSETS
@@ -37,6 +39,7 @@ function DashboardMain() {
   const [updateProfile, setUpdateProfile] = useState({});
   const [alertShow, setAlertShow] = useState(null);
   const [alertContext, setAlertContext] = useState(null);
+  const [openAlert, setOpenAlert] = useState(null);
 
   const { user, dispatch } = useContext(UserAuthContext);
 
@@ -44,8 +47,8 @@ function DashboardMain() {
   const handlePopupUpdate = (e) => {
     //alert("QR TAG ID: " + e.target.value);
     setPopupUpdate(!popupUpdate);
-    setQrTagID(e.target.parentElement.value);
-    getQrTagInfo(e.target.parentElement.value);
+    setQrTagID(e.target.value);
+    getQrTagInfo(e.target.value);
   };
 
   // FETCH HTTP DATA ONCOMPONENT LOAD
@@ -130,7 +133,6 @@ function DashboardMain() {
   // RETRIVE QR TAG INFORMATION
   const getQrTagInfo = async (ID_TAG) => {
     // API HTTP CALL : GET QR TAG INFORMATION
-    alert(ID_TAG);
     try {
       await ProfilesTagsAPI.showProfileInfo(ID_TAG, (err, PAYLOAD) => {
         if (err) {
@@ -166,13 +168,13 @@ function DashboardMain() {
   };
 
   // HANDLE SIGNUP PASSWORD SWITCH INPUT
-  const handleSignupSwitch = (event) => {
+  /*const handleSignupSwitch = (event) => {
     if (event.target.checked) {
       setIsGPSEnabled(true);
     } else {
       setIsGPSEnabled(false);
     }
-  };
+  };*/
 
   // CONVERT FILE IMAGE TO BASE64
   const toBase64 = (FILE) => {
@@ -218,7 +220,6 @@ function DashboardMain() {
     event.preventDefault();
     // CHECK IF UPDATE PROFILE HAS PROPERTIES
     if (Object.keys(updateProfile).length > 0) {
-      alert("YEAAH! Profile Updated ");
       try {
         await ProfilesTagsAPI.updateProfileTag(
           profileInfo._id,
@@ -272,6 +273,45 @@ function DashboardMain() {
   const handleIpAddressChange = (event) => {
     const value = event.target.value;
     setIp(value.trim());
+  };
+
+  // HANDLE REMOVE PROFILE TAG
+  const handleRemoveProfile = async (event) => {
+    const profileId = event.target.value;
+
+    // PROMPTE A CONFIRM POPUP
+    const isConfirm = window.confirm(`Are you sure ?`);
+    if (!isConfirm) {
+      setOpenAlert(false);
+      setAlertContext("Operation Aborted !");
+      return;
+    }
+
+    try {
+      await ProfilesTagsAPI.removeProfileTag(profileId, (err, PROFILE) => {
+        if (err) {
+          alert(err);
+          console.log(err);
+          return;
+        }
+
+        switch (PROFILE.codeKey) {
+          case 0:
+            setOpenAlert(true);
+            setAlertContext(PROFILE.message);
+            break;
+          case 1:
+            setOpenAlert(true);
+            setAlertContext(PROFILE.message);
+            break;
+          default:
+            return null;
+        }
+      });
+    } catch (err) {
+      alert(err.message);
+      console.error(err);
+    }
   };
 
   // MODAL STYLE
@@ -366,7 +406,7 @@ function DashboardMain() {
 
         {/*--- TOP 20 VISITED COUNTRIES LIST SECTION ---*/}
         <section className="dash_countries_visited_section">
-          <h3 className="dash_section_label"># visits deomographic</h3>
+          <h3 className="dash_section_label">#Last visits by deomographic</h3>
           <div className="row w-100 mt-4">
             <div className="col-md-6 col-sm-12 col-6">
               <div className="dash_countries_list">
@@ -536,10 +576,15 @@ function DashboardMain() {
                               onClick={(e) => handlePopupUpdate(e)}
                               type="button"
                             >
-                              <i class="bx bx-edit-alt"></i>
+                              Edit
                             </button>
-                            <button className="tag-remove-btn" type="button">
-                              <i class="bx bxs-trash-alt"></i>
+                            <button
+                              className="tag-remove-btn"
+                              value={profile._id}
+                              onClick={handleRemoveProfile}
+                              type="button"
+                            >
+                              remove
                             </button>
                           </div>
                           <div className="qrcode-icon-wrapper-bottom">
@@ -754,6 +799,50 @@ function DashboardMain() {
           </section>
         </Box>
       </Modal>
+      {/*--- FIXED ALERT BOX ---*/}
+      {openAlert ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenAlert(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="success"
+          >
+            <AlertTitle>Operation Sucsess</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : openAlert === false ? (
+        <div className="fixed_alert_box">
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpenAlert(null);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            severity="error"
+          >
+            <AlertTitle>Operation Failed</AlertTitle>
+            {alertContext}
+          </Alert>
+        </div>
+      ) : null}
     </div>
   );
 }
