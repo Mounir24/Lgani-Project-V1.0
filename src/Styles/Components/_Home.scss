@@ -126,7 +126,7 @@
             @include tablet {
                 width: 100%;
                 margin-top: 22rem;
-                margin-bottom: 45rem;
+               margin-bottom: 45rem;
             }
 
             .hero-banner-title {
@@ -188,15 +188,6 @@
                     left: 100%;
                 }
             }
-
-            .banner-dash-btn {
-                @include Button(10px 45px, $bg_clr);
-                @include Font($robotoCD, 200, 17px, $primary_clr !important);
-                //text-transform: capitalize !important;
-                margin-top: 2.5rem;
-                position: relative;
-                overflow: hidden;
-            }
         }
     }
 
@@ -209,13 +200,12 @@
         @include phone {
             margin-top: 9vh;
             padding: 1rem;
-            background: none;
+           background: none;
         }
 
         @include tablet {
             background: none;
         }
-
         @include sm-desktop {
             background: none;
         }
@@ -231,7 +221,7 @@
         .row {
 
             @include phone {
-                margin-top: 100vh;
+               margin-top: 100vh;
             }
 
             #swp {
@@ -263,7 +253,7 @@
                     text-align: center;
                     padding: 1.5rem;
                 }
-
+                
             }
         }
 
@@ -300,7 +290,9 @@
                 margin: auto;
 
                 .step2 {
-                    @include tablet {}
+                    @include tablet {
+
+                    }
                 }
 
                 img {
@@ -335,7 +327,7 @@
 
         @include phone {
             margin-top: 87rem;
-            width: 100%;
+           width: 100%;
         }
 
         // @include tablet {
@@ -345,19 +337,19 @@
 
         .row {
             @include sm-desktop {
-                display: flex;
-                width: 145% !important;
+            display: flex;
+            width: 145% !important;
             }
         }
-
+        
         #ajidq {
 
             @include sm-desktop {
-                margin-left: -6rem;
-                width: 47% !important;
-                height: 47%;
-            }
+            margin-left: -6rem;
+            width: 47% !important;
+            height: 47%;
         }
+        } 
 
         #aji {
             @include sm-desktop {
@@ -369,7 +361,7 @@
         }
 
         .col-md-6 {
-
+            
             @include tablet {
                 margin: auto;
             }
@@ -378,17 +370,17 @@
         @include tablet {
             margin-top: 35rem;
         }
-
-        .container {
-            //     @include phone {
-            //         background-color: crimson;
-            //         text-align: center;
-            //         font-size: 10px !important;
-            //         position: absolute;
-            //     }
+        
+         .container {
+        //     @include phone {
+        //         background-color: crimson;
+        //         text-align: center;
+        //         font-size: 10px !important;
+        //         position: absolute;
+        //     }
 
             .row {
-
+                
                 @include phone {
                     width: 100% !important;
                     display: block;
@@ -400,12 +392,10 @@
                 }
             }
         }
-
         .section-label {
             font-size: 22px !important;
             text-align: center;
         }
-
         .brand_name {
             color: $primary_clr;
             position: relative;
@@ -420,6 +410,31 @@
                 position: absolute;
                 bottom: -0.50rem;
                 left: 0;
+            }
+        }
+
+        .box-poster-wrapper {
+            width: 100%;
+            height: 100%;
+
+            @include phone {
+                top: 20rem;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scale(1.2);
+
+                @include phone {
+                    width: 200% !important;
+                    object-fit: cover;
+                }
+
+                @include tablet {
+                    width: 100%;
+                }
             }
         }
 
@@ -438,7 +453,7 @@
                     width: 220% !important;
                     margin-left: 10%;
                     font-size: 17px !important;
-
+                
                 }
 
                 @include tablet {
@@ -532,7 +547,9 @@
                 margin-bottom: 0.75rem;
 
                 @include phone {
-                    margin-left: -3rem;
+                    // margin-left: -3rem;
+                    text-align: left;
+                    font-size: 30px !important;
                 }
             }
 

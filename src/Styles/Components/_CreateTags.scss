@@ -119,12 +119,10 @@
             }
 
             .hint-alert-wrap {
-                margin-top: 1rem;
+                margin-top: 1.5rem;
 
                 @include phone {
-                    margin-top: 12rem;
-                    margin-left: -2.4rem;
-                    width: 200%;
+                    width: 100%;
                 }
             }
 

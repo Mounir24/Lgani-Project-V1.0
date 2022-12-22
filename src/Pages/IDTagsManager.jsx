@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import { UserAuthContext } from "../Context/UserAuthContext";
-import Loader from "../Components/Loader";
+// import Loader from "../Components/Loader";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Alert from "@mui/material/Alert";
